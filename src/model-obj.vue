@@ -142,7 +142,6 @@ export default {
                     this.loader.load( this.src.objs[i].obj, onLoad, onProgress, onError );
                 }
             }
-
         }
     }
 }
