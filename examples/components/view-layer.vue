@@ -14,11 +14,9 @@ export default {
         base:'static/models/obj',
         mtls:'',
         objs:[{
-          obj:'static/models/obj/tree.obj',
-          mtl:''
+          obj:'body.obj'
         },{
-          obj:'static/models/obj/obj.obj',
-          mtl:''
+          obj:'opai.obj'
         }]
       }
     };
