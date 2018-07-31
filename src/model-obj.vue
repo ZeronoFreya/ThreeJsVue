@@ -31,6 +31,12 @@ export default {
                 ]
             }
         },
+        src:{
+            type: Array,
+            default(){
+                return []
+            }
+        },
         smoothing: {
             type: Boolean,
             default: false
@@ -44,6 +50,7 @@ export default {
     },
     data() {
         return {
+            modelsCount: 0,
             loader: new OBJLoader(),
             mtlLoader: new MTLLoader()
         }
@@ -66,7 +73,7 @@ export default {
         },
         load() {
 
-            if ( !this.src ) return;
+            if ( this.src.length == 0 ) return;
 
             if ( this.object ) {
                 this.wrapper.remove( this.object );
@@ -78,10 +85,13 @@ export default {
                     this.process( object );
                 }
 
-                this.addObject( object )
+                this.addObject( object );
 
-                this.$emit( 'on-load' );
+                this.modelsCount -= 1;
 
+                if ( this.modelsCount == 0 ){
+                    this.$emit( 'on-load' );
+                }
             }
 
             const onProgress = xhr => {
@@ -127,12 +137,13 @@ export default {
                 }, () => {}, onError );
 
             } else {
-
-                this.loader.load( this.src, onLoad, onProgress, onError );
-
+                for (let i = 0, il = this.src.objs.length; i < il; i++) {
+                    this.modelsCount += 1;
+                    this.loader.load( this.src.objs[i].obj, onLoad, onProgress, onError );
+                }
             }
 
-        },
+        }
     }
 }
 </script>

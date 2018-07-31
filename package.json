@@ -16,7 +16,7 @@
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "test": "npm run unit",
     "lint": "eslint --fix --ext .js,.vue build config examples src test/unit/specs",
-    "examples": "node build/build-examples.js",
+    "demo": "node build/build-examples.js",
     "build": "rollup -c build/rollup.prod.conf.js"
   },
   "peerDependencies": {

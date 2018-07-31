@@ -42,7 +42,7 @@ const suportWebGL = ( () => {
 export default {
     props: {
         src: {
-            type: String
+            type: Array
         },
         width: {
             type: Number
@@ -105,6 +105,7 @@ export default {
                 width: this.width,
                 height: this.height
             },
+            modelsCount: 0,
             object: null,
             raycaster: new Raycaster(),
             mouse: new Vector2(),
@@ -221,8 +222,9 @@ export default {
         onResize() {
 
             if ( this.width === undefined || this.height === undefined ) {
-
+                
                 this.$nextTick( () => {
+                    
                     this.size = {
                         width: this.$el.offsetWidth,
                         height: this.$el.offsetHeight
@@ -437,7 +439,7 @@ export default {
         },
         load() {
 
-            if ( !this.src ) return;
+            if ( this.src.length == 0 ) return;
 
             if ( this.object ) {
 
@@ -445,27 +447,33 @@ export default {
 
             }
 
-            this.loader.load( this.src, ( ...args ) => {
+            for (let i = 0, il = this.src.length; i < il; i++) {
+                    this.modelsCount += 1;
+                    this.loader.load( this.src[i].model, ( ...args ) => {
 
-                const object = this.getObject( ...args )
+                        const object = this.getObject( ...args )
 
-                if ( this.process ) {
-                    this.process( object );
+                        if ( this.process ) {
+                            this.process( object );
+                        }
+
+                        this.addObject( object )
+
+                        if ( this.modelsCount == 0 ){
+                            this.$emit( 'on-load' );
+                        }
+
+                    }, xhr => {
+
+                        this.$emit( 'on-progress', xhr );
+
+                    }, err => {
+
+                        this.$emit( 'on-error', err );
+
+                    } );
                 }
-
-                this.addObject( object )
-
-                this.$emit( 'on-load' );
-
-            }, xhr => {
-
-                this.$emit( 'on-progress', xhr );
-
-            }, err => {
-
-                this.$emit( 'on-error', err );
-
-            } );
+            
 
         },
         getObject( object ) {

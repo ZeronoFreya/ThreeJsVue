@@ -1,9 +1,7 @@
 <template>
-    <div>
-        <model-obj :backgroundAlpha="0"
-            @on-load="onLoad" 
-            src="../static/models/obj/tree.obj"></model-obj>
-    </div>
+    <model-obj
+        @on-load="onLoad" 
+        :src="src"></model-obj>
 </template>
 <script>
 import ModelObj from "../../src/model-obj.vue";
@@ -11,7 +9,19 @@ import ModelObj from "../../src/model-obj.vue";
 export default {
   name: "demo-obj",
   data() {
-    return {};
+    return {
+      src:{
+        base:'static/models/obj',
+        mtls:'',
+        objs:[{
+          obj:'static/models/obj/tree.obj',
+          mtl:''
+        },{
+          obj:'static/models/obj/obj.obj',
+          mtl:''
+        }]
+      }
+    };
   },
   methods: {
     onLoad() {

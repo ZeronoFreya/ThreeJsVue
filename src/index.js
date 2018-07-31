@@ -2,29 +2,29 @@ import Vue from 'vue'
 
 import ModelObj from './model-obj.vue'
 import ModelThree from './model-three.vue'
-import ModelStl from './model-stl.vue'
-import ModelPly from './model-ply.vue'
-import ModelCollada from './model-collada.vue'
-import ModelGltf from './model-gltf.vue'
+// import ModelStl from './model-stl.vue'
+// import ModelPly from './model-ply.vue'
+// import ModelCollada from './model-collada.vue'
+// import ModelGltf from './model-gltf.vue'
 
 // alias
 const ModelJson = Vue.extend( ModelThree, {
     name: 'model-json'
 } )
 
-const ModelDae = Vue.extend( ModelCollada, {
-    name: 'model-dae'
-} )
+// const ModelDae = Vue.extend( ModelCollada, {
+//     name: 'model-dae'
+// } )
 
 const components = [
     ModelObj,
-    ModelThree,
+    // ModelThree,
     ModelJson,
-    ModelStl,
-    ModelPly,
-    ModelCollada,
-    ModelDae,
-    ModelGltf,
+    // ModelStl,
+    // ModelPly,
+    // ModelCollada,
+    // ModelDae,
+    // ModelGltf,
 ]
 
 const install = ( Vue ) => {
@@ -40,23 +40,23 @@ if ( typeof window !== 'undefined' && window.Vue ) {
 export default {
     install,
     ModelObj,
-    ModelThree,
+    // ModelThree,
     ModelJson,
-    ModelStl,
-    ModelPly,
-    ModelCollada,
-    ModelDae,
-    ModelGltf,
+    // ModelStl,
+    // ModelPly,
+    // ModelCollada,
+    // ModelDae,
+    // ModelGltf,
 }
 
 export {
     install,
     ModelObj,
-    ModelThree,
+    // ModelThree,
     ModelJson,
-    ModelStl,
-    ModelPly,
-    ModelCollada,
-    ModelDae,
-    ModelGltf,
+    // ModelStl,
+    // ModelPly,
+    // ModelCollada,
+    // ModelDae,
+    // ModelGltf,
 }
