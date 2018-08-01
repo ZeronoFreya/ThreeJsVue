@@ -20,8 +20,6 @@ function pathJoin(root, ...args) {
         idxs = getIdx(arg);
         p.push(arg.substring(idxs[0], idxs[1]));
     }
-    console.log(p);
-    
     return p.join('/');
 }
 export { pathJoin }

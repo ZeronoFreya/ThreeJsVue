@@ -2,11 +2,13 @@
     <div class="container">
         <view-layer 
             @on-load="onLoad"></view-layer>
+        <menu-fuck></menu-fuck>
         <div class="loading" v-show="loading"></div>
     </div>
 </template>
 <script>
 import ViewLayer from './components/view-layer';
+import MenuFuck from './components/menu';
 export default {
     data() {
         return {
@@ -19,7 +21,8 @@ export default {
         }
     },
     components: {
-        ViewLayer
+        ViewLayer,
+        MenuFuck
     }
 }
 </script>
@@ -29,5 +32,6 @@ export default {
 .container{
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 </style>
