@@ -71,6 +71,7 @@ export default {
         });
       }
     },
+    
     load() {
       if (this.objs.length == 0) return;
 
@@ -93,8 +94,6 @@ export default {
       };
 
       const onError = err => {
-        console.log(233);
-        
         this.$emit("on-error", err);
       };
 
@@ -128,6 +127,7 @@ export default {
           onError
         );
       } else {
+        
         for (let i = 0, il = this.objs.length; i < il; i++) {
           this.loadStart();
           this.loader.load(this.objs[i].obj, onLoad, onProgress, onError);

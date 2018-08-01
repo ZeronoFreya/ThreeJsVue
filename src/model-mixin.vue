@@ -23,7 +23,9 @@ import {
     AmbientLight,
     PointLight,
     HemisphereLight,
-    DirectionalLight
+    DirectionalLight,
+    MeshBasicMaterial,
+    Mesh
 } from 'three'
 import { getSize, getCenter } from './util'
 import { OrbitControls } from './controls/OrbitControls'
@@ -107,7 +109,7 @@ export default {
                 height: this.height
             },
             objectsCount: 0,
-            object: null,
+            allObjects: [],
             raycaster: new Raycaster(),
             mouse: new Vector2(),
             camera: new PerspectiveCamera( 45, 1, 0.01, 100000 ),
@@ -484,6 +486,19 @@ export default {
             }
         },
         allLoaded(){
+            let diffuseColor = new Color().setHSL( 1.0, 0.5, 0.6 * 0.5 + 0.1 );
+            // let diffuseColor = new Color().setRGB(195, 108, 117);
+            
+            let materials = new MeshBasicMaterial( {
+                map: null,
+                color: diffuseColor,
+                reflectivity: 1.0,
+                envMap: null
+            } );
+            
+            
+            this.setMaterial( materials)
+
             const center = getCenter( this.wrapper )
 
             // correction position
@@ -502,9 +517,22 @@ export default {
         },
         addObject( object ) {
             this.object = object
+            this.allObjects.push(object)
             this.wrapper.add( object )
 
             this.loadEnd()          
+        },
+        setMaterial(mtl, objects=this.allObjects){
+            let object;
+            for (let i = 0, il = objects.length; i < il; i++) {
+                object = objects[i];
+                object.traverse( function ( child ) {
+                    if ( child instanceof Mesh ) {
+                        if (child.material) child.material.dispose();
+                        child.material = mtl;
+                    }
+                } );
+            }      
         },
         setObjs() {
             let objs = [];

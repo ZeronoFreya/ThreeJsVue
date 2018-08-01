@@ -1,5 +1,6 @@
 <template>
     <model-obj
+        backgroundColor="#fff"
         @on-load="onLoad" 
         :src="src"></model-obj>
 </template>
