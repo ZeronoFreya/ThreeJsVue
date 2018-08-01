@@ -5,7 +5,7 @@ import { toIndexed } from "./util";
 import mixin from "./model-mixin.vue";
 
 import * as THREE from "three";
-import { getSize, getCenter } from "./util";
+// import { getSize, getCenter } from "./util";
 
 export default {
   name: "model-obj",
@@ -50,7 +50,6 @@ export default {
   },
   data() {
     return {
-      modelsCount: 0,
       objs: this.setObjs(),
       loader: new OBJLoader(),
       mtlLoader: new MTLLoader()
@@ -75,22 +74,18 @@ export default {
     load() {
       if (this.objs.length == 0) return;
 
-      if (this.object) {
-        this.wrapper.remove(this.object);
-      }
+      // if (this.object) {
+      //   this.wrapper.remove(this.object);
+      // }
 
       const onLoad = object => {
+        
         if (this.process) {
           this.process(object);
         }
 
         this.addObject(object);
 
-        this.modelsCount -= 1;
-
-        if (this.modelsCount == 0) {
-          this.$emit("on-load");
-        }
       };
 
       const onProgress = xhr => {
@@ -98,6 +93,8 @@ export default {
       };
 
       const onError = err => {
+        console.log(233);
+        
         this.$emit("on-error", err);
       };
 
@@ -132,20 +129,10 @@ export default {
         );
       } else {
         for (let i = 0, il = this.objs.length; i < il; i++) {
-          this.modelsCount += 1;
+          this.loadStart();
           this.loader.load(this.objs[i].obj, onLoad, onProgress, onError);
         }
       }
-    },
-    setObjs() {
-        let objs = [];
-        for (let i = 0, il = this.src.objs.length; i < il; i++) {
-            objs.push({
-                obj: this.src.base + "/" + this.src.objs[i].obj,
-                mtl: this.src.objs[i].mtl || ""
-            })
-        }
-      return objs;
     }
   }
 };

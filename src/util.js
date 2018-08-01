@@ -10,8 +10,7 @@ function getSize( object ) {
 }
 
 function getCenter( object ) {
-
-    box.setFromObject( object );
+    box.setFromObject(object );
 
     return box.getCenter();
 }

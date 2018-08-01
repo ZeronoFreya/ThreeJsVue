@@ -27,6 +27,7 @@ import {
 } from 'three'
 import { getSize, getCenter } from './util'
 import { OrbitControls } from './controls/OrbitControls'
+import { pathJoin } from "./base";
 
 const suportWebGL = ( () => {
 
@@ -105,7 +106,7 @@ export default {
                 width: this.width,
                 height: this.height
             },
-            modelsCount: 0,
+            objectsCount: 0,
             object: null,
             raycaster: new Raycaster(),
             mouse: new Vector2(),
@@ -319,16 +320,13 @@ export default {
         updateCamera() {
 
             const camera = this.camera;
-            const object = this.object;
 
             camera.aspect = this.size.width / this.size.height;
             camera.updateProjectionMatrix();
 
             if ( !this.cameraLookAt && !this.cameraPosition && !this.cameraRotation && !this.cameraUp ) {
 
-                if ( !object ) return;
-
-                const distance = getSize( object ).length();
+                const distance = getSize( this.wrapper ).length();
 
                 camera.position.set( 0, 0, 0 );
                 camera.position.z = distance;
@@ -476,24 +474,54 @@ export default {
             
 
         },
+        loadStart(){
+            this.objectsCount += 1
+        },
+        loadEnd(){
+            this.objectsCount -= 1
+            if (this.objectsCount == 0) {
+                this.allLoaded();
+            }
+        },
+        allLoaded(){
+            const center = getCenter( this.wrapper )
+
+            // correction position
+            this.wrapper.position.copy( center.negate() )
+            this.updateCamera()
+            this.updateModel()
+
+            this.objectsCount = 0
+
+            this.$emit("on-load");
+        },
         getObject( object ) {
 
             return object
 
         },
         addObject( object ) {
-
-            const center = getCenter( object )
-
-            // correction position
-            this.wrapper.position.copy( center.negate() )
-
             this.object = object
             this.wrapper.add( object )
 
-            this.updateCamera()
-            this.updateModel()
-
+            this.loadEnd()          
+        },
+        setObjs() {
+            let objs = [];
+            let obj, mtl = '';
+            for (let i = 0, il = this.src.objs.length; i < il; i++) {
+                obj = this.src.objs[i];
+                mtl = '';
+                if (typeof obj == Object){
+                    obj = obj.obj;
+                    mtl = obj.mtl || "";
+                }
+                objs.push({
+                    obj: pathJoin(this.src.base, obj),
+                    mtl: mtl
+                })
+            }
+        return objs;
         },
         animate() {
             this.reqId = requestAnimationFrame( this.animate );

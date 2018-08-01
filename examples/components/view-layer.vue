@@ -13,11 +13,7 @@ export default {
       src:{
         base:'static/models/obj',
         mtls:'',
-        objs:[{
-          obj:'body.obj'
-        },{
-          obj:'opai.obj'
-        }]
+        objs:['body.obj','opai.obj']
       }
     };
   },

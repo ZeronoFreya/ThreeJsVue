@@ -7,6 +7,7 @@ import ModelThree from './model-three.vue'
 // import ModelCollada from './model-collada.vue'
 // import ModelGltf from './model-gltf.vue'
 
+
 // alias
 const ModelJson = Vue.extend( ModelThree, {
     name: 'model-json'
