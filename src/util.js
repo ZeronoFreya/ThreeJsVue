@@ -5,7 +5,7 @@ const box = new Box3();
 function getSize( object ) {
 
     box.setFromObject( object );
-
+    
     return box.getSize();
 }
 

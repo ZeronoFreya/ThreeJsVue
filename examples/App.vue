@@ -2,13 +2,13 @@
     <div class="container">
         <view-layer 
             @on-load="onLoad"></view-layer>
-        <menu-fuck></menu-fuck>
+        <float-menu></float-menu>
         <div class="loading" v-show="loading"></div>
     </div>
 </template>
 <script>
 import ViewLayer from './components/view-layer';
-import MenuFuck from './components/menu';
+import FloatMenu from './components/float-menu';
 export default {
     data() {
         return {
@@ -22,7 +22,7 @@ export default {
     },
     components: {
         ViewLayer,
-        MenuFuck
+        FloatMenu
     }
 }
 </script>

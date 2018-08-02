@@ -328,9 +328,7 @@ export default {
 
             if ( !this.cameraLookAt && !this.cameraPosition && !this.cameraRotation && !this.cameraUp ) {
 
-                const distance = getSize( this.wrapper ).length() + 50;
-                console.log(distance);
-                
+                const distance = getSize( this.wrapper ).length();
 
                 camera.position.set( 0, 0, 0 );
                 camera.position.z = distance;
