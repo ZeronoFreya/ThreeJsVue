@@ -56,7 +56,8 @@ export default {
     },
     closeMenu(){
       if (!this.isLockMenu) {
-        this.showMenu = false
+        this.showMenu = false;
+        this.secActive = NaN;
       }
     },
     fullScreen() {
@@ -66,9 +67,7 @@ export default {
       console.log(mtl);
     },
     toggleSecMenu(index){
-      console.log(index);
-      
-        this.secActive = index;
+      this.secActive = index;
     }
   },
   components: {

@@ -8,7 +8,9 @@ import {
 import {
 	FloatNode
 } from "../inputs/FloatNode";
-
+import {
+	UVNode
+} from "../accessors/UVNode";
 
 /**
  * @author sunag / http://www.sunag.com.br/
@@ -203,7 +205,7 @@ PhongNode.prototype.build = function ( builder ) {
 			output.push(
 				'normal = perturbNormal2Arb(-vViewPosition,normal,' +
 				normal.result + ',' +
-				new THREE.UVNode().build( builder, 'v2' ) + ',' +
+				new UVNode().build( builder, 'v2' ) + ',' +
 				( normalScale ? normalScale.result : 'vec2( 1.0 )' ) + ');'
 			);
 

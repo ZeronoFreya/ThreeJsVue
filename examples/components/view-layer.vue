@@ -1,6 +1,6 @@
 <template>
     <model-obj
-        backgroundColor="#fff"
+        :backgroundAlpha="bgAlpha"
         @on-load="onLoad" 
         :src="src"></model-obj>
 </template>
@@ -8,9 +8,10 @@
 import ModelObj from "../../src/model-obj.vue";
 
 export default {
-  name: "demo-obj",
+  name: "view-layer",
   data() {
     return {
+      bgAlpha: 0,
       src:{
         base:'static/models/obj',
         mtls:'',

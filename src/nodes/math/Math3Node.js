@@ -6,7 +6,7 @@ import {
  * @author sunag / http://www.sunag.com.br/
  */
 
-Math3Node = function( a, b, c, method ) {
+const Math3Node = function( a, b, c, method ) {
 
 	TempNode.call( this );
 

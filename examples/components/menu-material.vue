@@ -7,6 +7,7 @@
 <script>
 import EventHub from '../../src/eventHub';
 import { wire } from "../static/material/wire.js";
+import { advToon } from "../static/material/adv-toon.js";
 export default {
   data() {
     return {
@@ -14,6 +15,10 @@ export default {
         {
           text: "wire",
           action: wire
+        },
+        {
+          text: "advToon",
+          action: advToon
         }
       ]
     }

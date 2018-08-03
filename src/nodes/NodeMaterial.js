@@ -17,7 +17,9 @@ import {
 import {
 	ConstNode
 } from "./ConstNode";
-
+import {
+	RawNode
+} from "./RawNode";
 
 /**
  * @author sunag / http://www.sunag.com.br/
@@ -27,8 +29,8 @@ const NodeMaterial = function( vertex, fragment ) {
 
 	THREE.ShaderMaterial.call( this );
 
-	this.vertex = vertex || new THREE.RawNode( new PositionNode( PositionNode.PROJECTION ) );
-	this.fragment = fragment || new THREE.RawNode( new ColorNode( 0xFF0000 ) );
+	this.vertex = vertex || new RawNode( new PositionNode( PositionNode.PROJECTION ) );
+	this.fragment = fragment || new RawNode( new ColorNode( 0xFF0000 ) );
 
 };
 

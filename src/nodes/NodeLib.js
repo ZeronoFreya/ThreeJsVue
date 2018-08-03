@@ -11,7 +11,12 @@ import {
 import {
 	FunctionNode
 } from "./FunctionNode";
-
+import {
+	TimerNode
+} from "./utils/TimerNode";
+import {
+	UVNode
+} from "./accessors/UVNode";
 
 /**
  * @author sunag / http://www.sunag.com.br/
@@ -86,13 +91,13 @@ const NodeLib = {
 
 NodeLib.addKeyword( 'uv', function() {
 
-	return new THREE.UVNode();
+	return new UVNode();
 
 } );
 
 NodeLib.addKeyword( 'uv2', function() {
 
-	return new THREE.UVNode( 1 );
+	return new UVNode( 1 );
 
 } );
 
@@ -134,7 +139,7 @@ NodeLib.addKeyword( 'viewNormal', function() {
 
 NodeLib.addKeyword( 'time', function() {
 
-	return new THREE.TimerNode();
+	return new TimerNode();
 
 } );
 
