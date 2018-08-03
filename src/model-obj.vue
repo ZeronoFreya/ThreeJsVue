@@ -7,6 +7,8 @@ import mixin from "./model-mixin.vue";
 import * as THREE from "three";
 // import { getSize, getCenter } from "./util";
 
+import EventHub from './eventHub';
+
 export default {
   name: "model-obj",
   mixins: [mixin],
@@ -47,6 +49,12 @@ export default {
     mtl: {
       type: String
     }
+  },
+  created() {
+    EventHub.$on('emitevent', (mtl) => {
+      // console.log(i);
+      this.setMaterial( mtl)
+    });
   },
   data() {
     return {

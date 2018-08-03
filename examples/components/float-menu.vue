@@ -11,7 +11,7 @@
                   @click.prevent.stop="toggleSecMenu(index)">
                   <span class="action_name">{{ item.text }}</span>
               </div>
-              <component :is="item.template"></component>
+              <component @closeMenu="closeMenu" :is="item.template"></component>
           </li>
           <li class="action_list" v-else @click.prevent.stop="item.action">{{ item.text }}</li>
       </template>
@@ -53,6 +53,11 @@ export default {
     },
     lockMenu() {
       this.isLockMenu = !this.isLockMenu;
+    },
+    closeMenu(){
+      if (!this.isLockMenu) {
+        this.showMenu = false
+      }
     },
     fullScreen() {
       console.log("Full Screen");

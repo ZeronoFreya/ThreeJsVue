@@ -486,18 +486,7 @@ export default {
             }
         },
         allLoaded(){
-            let diffuseColor = new Color().setHSL( 1.0, 0.5, 0.6 * 0.5 + 0.1 );
-            // let diffuseColor = new Color().setRGB(195, 108, 117);
             
-            let materials = new MeshBasicMaterial( {
-                map: null,
-                color: diffuseColor,
-                reflectivity: 1.0,
-                envMap: null
-            } );
-            
-            
-            this.setMaterial( materials)
 
             const center = getCenter( this.wrapper )
 

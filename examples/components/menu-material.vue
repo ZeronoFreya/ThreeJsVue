@@ -1,28 +1,27 @@
 <template>
     <ul class="expanded_panel">
         <li v-for="mtl in mtls"
-            @click.prevent.stop="switchMtl(mtl.mtl)">{{ mtl.text }}</li>
+            @click.prevent.stop="switchMtl(mtl.action())">{{ mtl.text }}</li>
     </ul>
 </template>
 <script>
+import EventHub from '../../src/eventHub';
+import { wire } from "../static/material/wire.js";
 export default {
   data() {
     return {
       mtls: [
         {
-          text: "standard",
-          mtl: "standard"
-        },
-        {
           text: "wire",
-          mtl: "wire"
+          action: wire
         }
       ]
     }
   },
   methods:{
     switchMtl(mtl) {
-      console.log(mtl);
+      EventHub.$emit('emitevent', mtl);
+      this.$emit('closeMenu');
     }
   }
 };
