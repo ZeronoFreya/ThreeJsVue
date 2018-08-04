@@ -31,7 +31,7 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .expanded_panel {
   background: rgba(0, 0, 0, 0.6);
   padding: 10px 0;

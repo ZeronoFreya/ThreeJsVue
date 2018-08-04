@@ -1,4 +1,6 @@
-import * as THREE from 'three';
+import {
+	ShaderMaterial, NormalBlending, CubeTexture
+} from 'three';
 import {
 	PositionNode
 } from "./accessors/PositionNode";
@@ -27,7 +29,7 @@ import {
 
 const NodeMaterial = function( vertex, fragment ) {
 
-	THREE.ShaderMaterial.call( this );
+	ShaderMaterial.call( this );
 
 	this.vertex = vertex || new RawNode( new PositionNode( PositionNode.PROJECTION ) );
 	this.fragment = fragment || new RawNode( new ColorNode( 0xFF0000 ) );
@@ -84,7 +86,7 @@ NodeMaterial.addShortcuts = function( proto, prop, list ) {
 
 };
 
-NodeMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+NodeMaterial.prototype = Object.create( ShaderMaterial.prototype );
 NodeMaterial.prototype.constructor = NodeMaterial;
 
 NodeMaterial.prototype.updateFrame = function( delta ) {
@@ -238,7 +240,7 @@ NodeMaterial.prototype.build = function() {
 	}
 
 	this.lights = this.requestAttribs.light;
-	this.transparent = this.requestAttribs.transparent || this.blending > THREE.NormalBlending;
+	this.transparent = this.requestAttribs.transparent || this.blending > NormalBlending;
 
 	this.vertexShader = [
 		this.prefixCode,
@@ -486,7 +488,7 @@ NodeMaterial.prototype.getCodePars = function( pars, prefix ) {
 		var parsName = pars[ i ].name;
 		var parsValue = pars[ i ].value;
 
-		if ( parsType == 't' && parsValue instanceof THREE.CubeTexture ) parsType = 'tc';
+		if ( parsType == 't' && parsValue instanceof CubeTexture ) parsType = 'tc';
 
 		var type = NodeMaterial.types[ parsType ];
 

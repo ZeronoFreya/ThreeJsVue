@@ -1,4 +1,7 @@
-import * as THREE from 'three';
+import {
+	UniformsUtils,
+	UniformsLib
+} from 'three';
 import {
 	GLNode
 } from "../GLNode";
@@ -43,10 +46,10 @@ PhongNode.prototype.build = function ( builder ) {
 
 		var transform = this.transform ? this.transform.parseAndBuildCode( builder, 'v3', { cache: 'transform' } ) : undefined;
 
-		material.mergeUniform( THREE.UniformsUtils.merge( [
+		material.mergeUniform( UniformsUtils.merge( [
 
-			THREE.UniformsLib[ "fog" ],
-			THREE.UniformsLib[ "lights" ]
+			UniformsLib[ "fog" ],
+			UniformsLib[ "lights" ]
 
 		] ) );
 

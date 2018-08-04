@@ -1,11 +1,13 @@
-import * as THREE from 'three';
+import {
+	Math
+} from 'three';
 /**
  * @author sunag / http://www.sunag.com.br/
  */
 
 const GLNode = function( type ) {
 
-	this.uuid = THREE.Math.generateUUID();
+	this.uuid = Math.generateUUID();
 
 	this.allows = {};
 	this.requestUpdate = false;

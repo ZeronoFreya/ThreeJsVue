@@ -27,7 +27,6 @@ export default {
 }
 </script>
 <style>
-@import "./static/style/base.scss";
 
 .container{
     width: 100%;

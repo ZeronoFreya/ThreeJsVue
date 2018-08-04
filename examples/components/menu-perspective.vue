@@ -64,15 +64,16 @@ export default {
   display: table-cell;
 }
 .btn {
-  width: 30px;
-  height: 30px;
+  width: 80px;
+  height: 60px;
   background: #323232;
   border: none;
   outline: none;
   border-radius: 6px;
-  margin: 2px;
+  margin: 4px;
   cursor: pointer;
   color: #fafafa;
+  font-size: 30px;
 }
 </style>
 

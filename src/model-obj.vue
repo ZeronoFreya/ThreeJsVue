@@ -4,8 +4,6 @@ import { MTLLoader } from "./loaders/MTLLoader";
 import { toIndexed } from "./util";
 import mixin from "./model-mixin.vue";
 
-import * as THREE from "three";
-// import { getSize, getCenter } from "./util";
 
 import EventHub from './eventHub';
 
@@ -52,7 +50,6 @@ export default {
   },
   created() {
     EventHub.$on('emitevent', (mtl) => {
-      // console.log(i);
       this.setMaterial( mtl)
     });
   },

@@ -23,8 +23,7 @@
     "vue": ">=2.0.0"
   },
   "dependencies": {
-    "three": "^0.88.0",
-    "vue-3d-model": "^1.0.1"
+    "three": "^0.88.0"
   },
   "devDependencies": {
     "@hujiulong/eslint-config": "^0.0.5",
@@ -66,12 +65,14 @@
     "karma-webpack": "^2.0.2",
     "mocha": "^3.2.0",
     "node-notifier": "^5.1.2",
+    "node-sass": "^4.9.2",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
     "ora": "^1.2.0",
     "phantomjs-prebuilt": "^2.1.14",
     "portfinder": "^1.0.13",
     "postcss-import": "^11.0.0",
     "postcss-loader": "^2.0.8",
+    "postcss-pxtorem": "^4.0.1",
     "postcss-url": "^7.2.1",
     "rimraf": "^2.6.0",
     "rollup": "^0.58.2",
@@ -80,6 +81,7 @@
     "rollup-plugin-shader": "^0.0.3",
     "rollup-plugin-uglify": "^3.0.0",
     "rollup-plugin-vue": "^4.0.2",
+    "sass-loader": "^7.1.0",
     "selenium-server": "^3.0.1",
     "semver": "^5.3.0",
     "shelljs": "^0.7.6",
@@ -95,13 +97,6 @@
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.9.1",
     "webpack-merge": "^4.1.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hujiulong/vue-3d-model.git"
-  },
-  "bugs": {
-    "url": "https://github.com/hujiulong/vue-3d-model/issues"
   },
   "license": "MIT",
   "engines": {

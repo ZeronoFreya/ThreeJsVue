@@ -12,7 +12,8 @@ import { PhongNodeMaterial } from "../../../src/nodes/materials/PhongNodeMateria
 
 
 export function advToon() {
-    let count = new FloatNode(2.8);
+    let count = new FloatNode(2);
+    
     // let count = new FloatNode(0.2);
     let sceneDirectLight = new LightNode();
     // let color = new ColorNode(0xf8eaec);

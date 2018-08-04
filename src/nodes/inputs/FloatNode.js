@@ -1,4 +1,3 @@
-// import * as THREE from 'three';
 import { InputNode } from "../InputNode";
 /**
  * @author sunag / http://www.sunag.com.br/
