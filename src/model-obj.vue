@@ -11,26 +11,6 @@ export default {
   name: "model-obj",
   mixins: [mixin],
   props: {
-    lights: {
-      type: Array,
-      default() {
-        return [
-          {
-            type: "HemisphereLight",
-            position: { x: 0, y: 1, z: 0 },
-            skyColor: 0xaaaaff,
-            groundColor: 0x806060,
-            intensity: 0.2
-          },
-          {
-            type: "DirectionalLight",
-            position: { x: 1, y: 1, z: 1 },
-            color: 0xffffff,
-            intensity: 0.8
-          }
-        ];
-      }
-    },
     src: {
       type: Object,
       default() {
@@ -49,8 +29,10 @@ export default {
     }
   },
   created() {
-    EventHub.$on('emitevent', (mtl) => {
-      this.setMaterial( mtl)
+    EventHub.$on('setmaterial', (mtl, lights=null) => {
+      this.setMaterial( mtl);
+      this.updateLights( lights );
+      EventHub.$emit('loading');
     });
   },
   data() {
@@ -76,7 +58,11 @@ export default {
         });
       }
     },
-    
+    buildOver(){
+      EventHub.renderer = this.renderer;
+      EventHub.camera = this.camera;
+      EventHub.controls = this.controls;
+    },
     load() {
       if (this.objs.length == 0) return;
 

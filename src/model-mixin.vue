@@ -74,7 +74,19 @@ export default {
         lights: {
             type: Array,
             default() {
-                return [];
+                return [{
+                    type: "HemisphereLight",
+                    position: { x: 0, y: 1, z: 0 },
+                    skyColor: 0xaaaaff,
+                    groundColor: 0x806060,
+                    intensity: 0.2
+                },
+                {
+                    type: "DirectionalLight",
+                    position: { x: 1, y: 1, z: 1 },
+                    color: 0xffffff,
+                    intensity: 0.8
+                }];
             }
         },
         cameraPosition: {
@@ -160,6 +172,8 @@ export default {
 
         window.addEventListener( 'resize', this.onResize, false );
 
+        this.buildOver();
+
         this.animate();
     },
     beforeDestroy() {
@@ -196,12 +210,6 @@ export default {
             handler( val ) {
                 if ( !this.object ) return;
                 this.object.scale.set( val.x, val.y, val.z );
-            }
-        },
-        lights: {
-            deep: true,
-            handler( val, oldVal ) {
-                this.updateLights();
             }
         },
         size: {
@@ -287,11 +295,10 @@ export default {
             return ( intersects && intersects.length ) > 0 ? intersects[ 0 ] : null;
 
         },
-        update() {
-
+        update() {            
             this.updateRenderer();
             this.updateCamera();
-            this.updateLights();
+            this.updateLights(this.lights);
             this.updateControls();
 
         },
@@ -345,13 +352,14 @@ export default {
             }
 
         },
-        updateLights() {
-
+        updateLights(_light ) {
+            _light = _light ? _light : this.lights;
+            
             this.scene.remove.apply( this.scene, this.allLights );
 
             this.allLights = [];
 
-            this.lights.forEach( item => {
+            _light.forEach( item => {
 
                 if ( !item.type ) return;
 
@@ -540,12 +548,12 @@ export default {
             }
         return objs;
         },
+        buildOver(){},
         animate() {
             this.reqId = requestAnimationFrame( this.animate );
             this.render();
         },
         render() {
-
             this.renderer.render( this.scene, this.camera )
 
         }

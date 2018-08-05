@@ -43,7 +43,7 @@ export function advToon(){
             },
             color: { // 方块的基础色
                 type: 'v3', // 指定变量类型为三维向量
-                value: new Color('#d7f11e')
+                value: new Color('#fef9f9')
             }
         },
         vertexShader: vertexShader,

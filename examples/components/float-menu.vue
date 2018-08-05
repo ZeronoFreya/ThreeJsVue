@@ -5,9 +5,9 @@
 		<ul class="panel">
       <template v-for="(item, index) in items">
           <li class="action_list"
-              :class="{'action_expanded': index == secActive}" 
+              :class="{'action_expanded': index == secActive || !item.text}"
               v-if="item.template">
-              <div class="toggle"
+              <div v-if="item.text" class="toggle"
                   @click.prevent.stop="toggleSecMenu(index, $event)">
                   <span class="action_name">{{ item.text }}</span>
               </div>
@@ -15,12 +15,14 @@
           </li>
           <li class="action_list" v-else @click.prevent.stop="item.action">{{ item.text }}</li>
       </template>
+      <li class="space"></li>
 		</ul>
 	</div>
 </template>
 <script>
 import MenuMaterial from "./menu-material";
 import MenuPerspective from "./menu-perspective";
+import MenuStatus from "./menu-status";
 // import {scroller} from 'vue-scrollto/src/scrollTo'
 export default {
   data() {
@@ -30,12 +32,7 @@ export default {
       secActive:NaN,
       items: [
         {
-          text: "Full Screen",
-          action: this.fullScreen
-        },
-        {
-          text: "Auto Rotate",
-          action: this.fullScreen
+          template: MenuStatus
         },
         {
           text: "Material",
@@ -122,6 +119,8 @@ export default {
 .menu_expanded {
   width: 100%;
   height: 40%;
+  bottom: 0;
+  right: 0;
   border-radius:0;
   // max-height: 80vh;
   .menu_button {
@@ -140,16 +139,23 @@ export default {
   padding-bottom: 20px;
   overflow-y: auto;
 }
-
+.space{
+  height: 40px;
+}
 .action_list {
-  height: 60px;
-  line-height: 60px;
+  height: 80px;
+  line-height: 1.2;
   text-align: center;
   overflow: hidden;
   font-size: 24px;
   padding: 10px 0;
 }
-
+.toggle{
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .action_name {
   position: relative;
 }

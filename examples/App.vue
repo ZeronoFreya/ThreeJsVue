@@ -9,11 +9,18 @@
 <script>
 import ViewLayer from './components/view-layer';
 import FloatMenu from './components/float-menu';
+import EventHub from '../src/eventHub';
+
 export default {
     data() {
         return {
             loading: true
         }
+    },
+    created() {
+        EventHub.$on('loading', () => {
+            this.loading = !this.loading;
+        });
     },
     methods: {
         onLoad() {

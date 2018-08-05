@@ -4,7 +4,8 @@
         <table class="table">
             <tr class="tr">
                 <td class="td">
-                    <button id="top" class="btn" type="button">T</button>
+                    <button id="top" class="btn" type="button"
+                        @click.prevent.stop="setViewPoint(top)">T</button>
                 </td>
                 <td class="td">
                     <button class="btn" type="button">&#9650;</button>
@@ -26,13 +27,15 @@
             </tr>
             <tr class="tr">
                 <td class="td">
-                    <button id="front" class="btn" type="button">F</button>
+                    <button id="front" class="btn" type="button"
+                        @click.prevent.stop="setViewPoint(front)">F</button>
                 </td>
                 <td class="td">
                     <button class="btn" type="button">&#9660;</button>
                 </td>
                 <td class="td">
-                    <button id="right" class="btn" type="button">R</button>
+                    <button id="right" class="btn" type="button"
+                        @click.prevent.stop="setViewPoint(right)">R</button>
                 </td>
             </tr>
         </table>
@@ -40,9 +43,40 @@
 </template>
 
 <script>
+import EventHub from "../../src/eventHub";
 export default {
     data() {
-        return {}
+        return {
+            target:{ x: 0, y: 59, z: 0 },
+            front:{
+                pos:{ x: 0, y: 59, z: 160 },
+                up:{ x: 0, y: 1, z: 0 }
+            },
+            right:{
+                pos:{ x: -160, y: 59, z: 0 },
+                up:{ x: 0, y: 1, z: 0 }
+            },
+            top:{
+                pos:{ x: 0, y: 220, z: 0 },
+                up:{ x: 0, y: 0, z: -1 }
+            }
+        }
+    },
+    methods:{
+        setViewPoint(p) {
+            EventHub.camera.position.set(
+                p.pos.x, 
+                p.pos.y, 
+                p.pos.z);
+            EventHub.camera.up.set(
+                p.up.x, 
+                p.up.y, 
+                p.up.z);
+            EventHub.controls.target.set(
+                this.target.x,
+                this.target.y,
+                this.target.z);
+        }
     }
 }
 </script>
@@ -51,6 +85,11 @@ export default {
 .expanded_panel {
   background: rgba(0, 0, 0, 0.6);
   padding: 10px 0;
+  padding-bottom: 40px;
+}
+.camera{
+  height: 60px;
+  line-height: 60px;
 }
 .table {
   display: table;

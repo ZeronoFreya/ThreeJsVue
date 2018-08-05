@@ -1,13 +1,16 @@
 <template>
-    <ul class="expanded_panel">
-        <li v-for="mtl in mtls"
-            @click.prevent.stop="switchMtl(mtl.action())">{{ mtl.text }}</li>
-    </ul>
+    <div class="contain">
+      <button type="button" 
+        v-for="mtl in mtls" class="item"
+        @click.prevent.stop="switchMtl(mtl.action)">{{ mtl.text }}</button>
+    </div>
 </template>
 <script>
-import EventHub from '../../src/eventHub';
 import { wire } from "../static/material/wire.js";
 import { advToon } from "../static/material/adv-toon.js";
+import { envmapsHdr } from "../static/material/envmaps-hdr.js";
+import EventHub from "../../src/eventHub";
+
 export default {
   data() {
     return {
@@ -19,22 +22,39 @@ export default {
         {
           text: "advToon",
           action: advToon
+        },
+        {
+          text: "envmapsHdr",
+          action: envmapsHdr
         }
       ]
-    }
+    };
   },
-  methods:{
-    switchMtl(mtl) {
-      EventHub.$emit('emitevent', mtl);
-      this.$emit('closeMenu');
+  created() {},
+  methods: {
+    switchMtl(setMaterial) {
+      EventHub.$emit("loading");
+      setMaterial();
+      this.$emit("closeMenu");
     }
   }
 };
 </script>
 <style lang="scss" scoped>
-.expanded_panel {
+.contain {
   background: rgba(0, 0, 0, 0.6);
   padding: 10px 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.item {
+  height: 60px;
+  line-height: 60px;
+  color: white;
+  font-size: 20px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>
 

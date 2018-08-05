@@ -9,18 +9,19 @@ import { Math3Node } from "../../../src/nodes/math/Math3Node";
 import { PositionNode } from "../../../src/nodes/accessors/PositionNode";
 import { NormalNode } from "../../../src/nodes/accessors/NormalNode";
 import { PhongNodeMaterial } from "../../../src/nodes/materials/PhongNodeMaterial";
-
+import EventHub from '../../../src/eventHub';
 
 export function advToon() {
-    let count = new FloatNode(2);
+    let count = new FloatNode(2.8);
     
     // let count = new FloatNode(0.2);
     let sceneDirectLight = new LightNode();
     // let color = new ColorNode(0xf8eaec);
-    let color = new ColorNode(0xfbf2e3);
-    let lineColor = new ColorNode(0xc88a88);
-    let lineSize = new FloatNode(0.1);
-    let lineInner = new FloatNode(0);
+    let color = new ColorNode(0xebc795);
+    // let color = new ColorNode(0xCC9F62);
+    let lineColor = new ColorNode(0x2B1C17);
+    let lineSize = new FloatNode(0.12);
+    let lineInner = new FloatNode(0.02);
     // CEL
     let lightLuminance = new LuminanceNode(sceneDirectLight);
     let preCelLight = new OperatorNode(lightLuminance, count, OperatorNode.MUL);
@@ -39,8 +40,18 @@ export function advToon() {
     let mtl = new PhongNodeMaterial();
     mtl.color = color;
     mtl.light = posCelLight;
-    mtl.shininess = new FloatNode(0);
+    mtl.shininess = new FloatNode(0.02);
     mtl.environment = lineColor;
     mtl.environmentAlpha = innerContour;
-    return mtl.build();
+
+    // mtl.envMap = null;
+
+    let renderer = EventHub.renderer;
+    renderer.gammaInput = true;
+    renderer.gammaOutput = true;
+    renderer.toneMappingExposure = 1.4;
+    // console.log(renderer.toneMappingExposure);
+    
+
+    EventHub.$emit('setmaterial', mtl.build());
 }
