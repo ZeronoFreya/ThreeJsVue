@@ -72,6 +72,11 @@ export default {
                 p.up.x, 
                 p.up.y, 
                 p.up.z);
+            EventHub.camera.lookAt(
+                this.target.x,
+                this.target.y,
+                this.target.z);
+            
             EventHub.controls.target.set(
                 this.target.x,
                 this.target.y,

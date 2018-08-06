@@ -120,11 +120,13 @@ export default {
                 width: this.width,
                 height: this.height
             },
+            vertFOV : 45,
+            aspectRatio: 1,
             objectsCount: 0,
             allObjects: [],
             raycaster: new Raycaster(),
             mouse: new Vector2(),
-            camera: new PerspectiveCamera( 45, 1, 0.01, 100000 ),
+            camera: new PerspectiveCamera( this.vertFOV, this.aspectRatio, 0.01, 8000 ),
             scene: new Scene(),
             wrapper: new Object3D(),
             renderer: null,
@@ -156,6 +158,7 @@ export default {
                 height: this.$el.offsetHeight
             }
         }
+        this.aspectRatio = this.size.width / this.size.height;
 
         this.renderer = new WebGLRenderer( { antialias: true, alpha: true, canvas: this.$refs.canvas } )
         this.renderer.shadowMap.enabled = true;
@@ -330,12 +333,21 @@ export default {
 
             const camera = this.camera;
 
-            camera.aspect = this.size.width / this.size.height;
+            camera.aspect = this.aspectRatio;
             camera.updateProjectionMatrix();
 
             if ( !this.cameraLookAt && !this.cameraPosition && !this.cameraRotation && !this.cameraUp ) {
-
-                const distance = getSize( this.wrapper ).length();
+                const size = getSize( this.wrapper );
+                let len = 0;
+                if (this.aspectRatio < (size.x/size.y)) {
+                    // 宽度适配
+                    len = size.x*3/4;
+                }else{
+                    len = size.y*3/4;
+                }
+                
+                let distance = len/Math.tan(this.vertFOV/2*Math.PI/180)+size.z/2;
+                // const distance = getSize( this.wrapper ).length();
 
                 camera.position.set( 0, 0, 0 );
                 camera.position.z = distance;
