@@ -34,6 +34,21 @@ export default {
       this.updateLights( lights );
       EventHub.$emit('loading');
     });
+    EventHub.$on('tofront', (target=null) => {
+      this.toFront( target );
+    });
+    EventHub.$on('toright', (target=null) => {
+      this.toRight( target );
+    });
+    EventHub.$on('totop', (target=null) => {
+      this.toTop( target );
+    });
+    EventHub.$on('toback', () => {
+      this.toBack();
+    });
+    EventHub.$on('setapparenthorizon', (hl) => {
+      this.setApparentHorizon(hl);
+    });
   },
   data() {
     return {

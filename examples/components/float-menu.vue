@@ -23,6 +23,7 @@
 import MenuMaterial from "./menu-material";
 import MenuPerspective from "./menu-perspective";
 import MenuStatus from "./menu-status";
+import MenuApparentHorizon from "./menu-apparent-horizon";
 // import {scroller} from 'vue-scrollto/src/scrollTo'
 export default {
   data() {
@@ -33,6 +34,10 @@ export default {
       items: [
         {
           template: MenuStatus
+        },
+        {
+          text: "Apparent Horizon",
+          template: MenuApparentHorizon
         },
         {
           text: "Material",
@@ -58,12 +63,6 @@ export default {
         this.secActive = NaN;
       }
     },
-    fullScreen() {
-      console.log("Full Screen");
-    },
-    switchMtl(mtl) {
-      console.log(mtl);
-    },
     toggleSecMenu(index, e){
       this.secActive = this.secActive == index ? NaN : index;
       // console.log(e.currentTarget);
@@ -74,9 +73,6 @@ export default {
       // container.scrollTop = 900;
       
     }
-  },
-  components: {
-    MenuMaterial, MenuPerspective
   }
 };
 </script>

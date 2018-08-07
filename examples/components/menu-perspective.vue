@@ -5,13 +5,14 @@
             <tr class="tr">
                 <td class="td">
                     <button id="top" class="btn" type="button"
-                        @click.prevent.stop="setViewPoint(top)">T</button>
+                        @click.prevent.stop="toTop">T</button>
                 </td>
                 <td class="td">
                     <button class="btn" type="button">&#9650;</button>
                 </td>
                 <td class="td">
-                    <button id="show_back" class="btn" type="button">&#9851;</button>
+                    <button id="show_back" class="btn" type="button"
+                        @click.prevent.stop="toBack">&#9851;</button>
                 </td>
             </tr>
             <tr class="tr">
@@ -28,14 +29,14 @@
             <tr class="tr">
                 <td class="td">
                     <button id="front" class="btn" type="button"
-                        @click.prevent.stop="setViewPoint(front)">F</button>
+                        @click.prevent.stop="toFront">F</button>
                 </td>
                 <td class="td">
                     <button class="btn" type="button">&#9660;</button>
                 </td>
                 <td class="td">
                     <button id="right" class="btn" type="button"
-                        @click.prevent.stop="setViewPoint(right)">R</button>
+                        @click.prevent.stop="toRight">R</button>
                 </td>
             </tr>
         </table>
@@ -47,40 +48,25 @@ import EventHub from "../../src/eventHub";
 export default {
     data() {
         return {
-            target:{ x: 0, y: 59, z: 0 },
-            front:{
-                pos:{ x: 0, y: 59, z: 160 },
-                up:{ x: 0, y: 1, z: 0 }
-            },
-            right:{
-                pos:{ x: -160, y: 59, z: 0 },
-                up:{ x: 0, y: 1, z: 0 }
-            },
-            top:{
-                pos:{ x: 0, y: 220, z: 0 },
-                up:{ x: 0, y: 0, z: -1 }
-            }
+            target:{ x: 0, y: 59, z: 0 }
         }
     },
     methods:{
-        setViewPoint(p) {
-            EventHub.camera.position.set(
-                p.pos.x, 
-                p.pos.y, 
-                p.pos.z);
-            EventHub.camera.up.set(
-                p.up.x, 
-                p.up.y, 
-                p.up.z);
-            EventHub.camera.lookAt(
-                this.target.x,
-                this.target.y,
-                this.target.z);
-            
-            EventHub.controls.target.set(
-                this.target.x,
-                this.target.y,
-                this.target.z);
+        toFront(){
+            EventHub.$emit('tofront',null);
+            this.$emit('closeMenu');
+        },
+        toRight(){
+            EventHub.$emit('toright',null);
+            this.$emit('closeMenu');
+        },
+        toTop(){
+            EventHub.$emit('totop',null);
+            this.$emit('closeMenu');
+        },
+        toBack(){
+            EventHub.$emit('toback');
+            this.$emit('closeMenu');
         }
     }
 }

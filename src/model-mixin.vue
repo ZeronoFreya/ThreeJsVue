@@ -120,6 +120,7 @@ export default {
                 width: this.width,
                 height: this.height
             },
+            apparentHorizon : 0, // 视平线
             vertFOV : 45,
             aspectRatio: 1,
             objectsCount: 0,
@@ -337,22 +338,7 @@ export default {
             camera.updateProjectionMatrix();
 
             if ( !this.cameraLookAt && !this.cameraPosition && !this.cameraRotation && !this.cameraUp ) {
-                const size = getSize( this.wrapper );
-                let len = 0;
-                if (this.aspectRatio < (size.x/size.y)) {
-                    // 宽度适配
-                    len = size.x*3/4;
-                }else{
-                    len = size.y*3/4;
-                }
-                
-                let distance = len/Math.tan(this.vertFOV/2*Math.PI/180)+size.z/2;
-                // const distance = getSize( this.wrapper ).length();
-
-                camera.position.set( 0, 0, 0 );
-                camera.position.z = distance;
-                camera.lookAt( new Vector3() );
-
+                return this.toFront();
             } else {
 
                 camera.position.set( this.cameraPosition.x, this.cameraPosition.y, this.cameraPosition.z )
@@ -559,6 +545,56 @@ export default {
                 })
             }
         return objs;
+        },
+        setApparentHorizon(hl){
+            this.apparentHorizon = hl;
+        },
+        distance(target){
+            const size = getSize( target );
+            let len = this.aspectRatio < (size.x/size.y) ? size.x/2 : size.y/2;
+            return (len/Math.tan(this.vertFOV/2*Math.PI/180)+size.z/2);
+            // const distance = getSize( this.wrapper ).length();
+        },
+        toFront(target=null){
+            const distance = this.distance(target || this.wrapper);
+
+            this.camera.position.set( 0, this.apparentHorizon, distance );
+            this.camera.up.set(0,1,0);
+            this.camera.lookAt( 0,this.apparentHorizon,0 );
+            if(this.controls){
+                this.controls.target.set( 0,this.apparentHorizon,0 );
+            }
+                
+        },
+        toRight(target=null){
+            const distance = this.distance(target || this.wrapper);
+            this.camera.position.set( -distance, this.apparentHorizon, 0 );
+            this.camera.up.set(0,1,0);
+            this.camera.lookAt( 0,this.apparentHorizon,0 );
+            if(this.controls){
+                this.controls.target.set( 0,this.apparentHorizon,0 );
+            }
+        },
+        toTop(target=null){
+            const distance = this.distance(target || this.wrapper);
+            this.camera.position.set( 0, distance, 0 );
+            this.camera.up.set(0,0,-1);
+            this.camera.lookAt( 0,this.apparentHorizon,0 );
+            if(this.controls){
+                this.controls.target.set( 0,this.apparentHorizon,0 );
+            }
+        },
+        toBack(){
+            let pos = this.camera.position;
+            let x = pos.x, y = pos.y, z = pos.z;
+            if (x == 0 && z == 0){
+                y *= -1;
+            }else{
+                x *= -1;
+                z *= -1;
+            }
+            this.camera.position.set(x, y, z);
+            this.camera.lookAt( 0,this.apparentHorizon,0 );
         },
         buildOver(){},
         animate() {
