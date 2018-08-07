@@ -10,7 +10,7 @@ import EventHub from "../../src/eventHub";
 export default {
   data() {
     return {
-      value : 10
+      value : 0
     };
   },
   methods: {
