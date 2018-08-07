@@ -1,6 +1,6 @@
 <template>
     <div class="contain">
-        <input type="range" min="-50" max="50" 
+        <input class="slider" type="range" min="-100" max="100" 
           v-model="value"
           @input="change"/>
     </div>
@@ -10,12 +10,13 @@ import EventHub from "../../src/eventHub";
 export default {
   data() {
     return {
-      value : 0
+      value : 10
     };
   },
   methods: {
     change() {
-      EventHub.$emit("setapparenthorizon", this.value);
+      let per = parseInt(this.value)/100;
+      EventHub.$emit("setapparenthorizon", per);
     }
   },
   created(){
@@ -30,6 +31,47 @@ export default {
     display: flex;
     justify-content: space-around;
     align-items: center;
+}
+.slider{
+  width: 80%;
+  height: 40px;
+  -webkit-appearance: none;
+  overflow:hidden; 
+  outline : none;
+  background:none;
+  &::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    position: relative;
+    width:10px;
+    height:10px;
+    background:#f22;
+    border-radius:50%;
+    transition:.2s;
+  }
+  &::-moz-range-track{
+    height:4px;
+    background:#edc;
+    border:none;
+  }
+  &::-moz-range-thumb{
+    width:10px;
+    height:10px;
+    background:#f22;
+    border:none;
+    border-radius:50%;
+  }
+  &::-moz-range-progress{
+    height:4px;
+    background:#f22;
+  }
+  &::-moz-focus-outer{
+    border:none;    /* 去除 focus 時候的外框虛線 */
+  }
+  &::-moz-range-thumb:hover,
+  &:active::-moz-range-thumb{
+    width:16px;
+  height:16px;
+  }
 }
 </style>
 
