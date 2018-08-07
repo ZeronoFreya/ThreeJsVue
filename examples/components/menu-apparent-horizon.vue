@@ -17,6 +17,9 @@ export default {
     change() {
       EventHub.$emit("setapparenthorizon", this.value);
     }
+  },
+  created(){
+    this.change();
   }
 };
 </script>

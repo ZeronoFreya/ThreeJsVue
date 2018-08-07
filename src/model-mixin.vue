@@ -547,7 +547,9 @@ export default {
         return objs;
         },
         setApparentHorizon(hl){
-            this.apparentHorizon = hl;
+            if (hl = parseInt(hl)) {
+                this.apparentHorizon = hl;
+            }
         },
         distance(target){
             const size = getSize( target );
@@ -564,7 +566,6 @@ export default {
             if(this.controls){
                 this.controls.target.set( 0,this.apparentHorizon,0 );
             }
-                
         },
         toRight(target=null){
             const distance = this.distance(target || this.wrapper);
