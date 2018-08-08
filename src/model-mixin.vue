@@ -29,6 +29,7 @@ import {
 } from 'three'
 import { getSize, getCenter } from './util'
 import { OrbitControls } from './controls/OrbitControls'
+// import { TrackballControls } from './controls/TrackballControls.js'
 import { pathJoin } from "./base";
 
 const suportWebGL = ( () => {
@@ -242,17 +243,15 @@ export default {
     },
     methods: {
         onResize() {
-
-            if ( this.width === undefined || this.height === undefined ) {
-                
+            if ( this.$el.offsetWidth !== this.size.width ||
+                 this.$el.offsetHeight !== this.size.height ) {
                 this.$nextTick( () => {
-                    
                     this.size = {
                         width: this.$el.offsetWidth,
                         height: this.$el.offsetHeight
                     }
+                    this.aspectRatio = this.size.width / this.size.height;
                 } )
-
             }
         },
         onMouseDown( event ) {
@@ -437,8 +436,10 @@ export default {
 
                 if ( this.controls ) return;
 
+                // this.controls = new TrackballControls( this.camera, this.$el );
                 this.controls = new OrbitControls( this.camera, this.$el );
-                this.controls.type = 'orbit';
+                // this.controls.type = 'orbit';
+                this.controls.type = 'trackball';
 
             } else {
 
@@ -585,8 +586,11 @@ export default {
                 return this.targetObjs.distance;
             }
             const size = getSize( target );
+            
             let len = this.aspectRatio < (size.x/size.y) ? size.x/2 : size.y/2;
+            
             let dis = len/Math.tan(this.vertFOV/2*Math.PI/180)+size.z/2;
+            
             this.targetObjs.objs = target;
             this.targetObjs.size = size;
             this.targetObjs.distance = dis;
