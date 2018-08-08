@@ -337,26 +337,10 @@ export default {
             renderer.setClearAlpha( this.backgroundAlpha );
         },
         updateCamera() {
-
-            const camera = this.camera;
-
-            camera.aspect = this.aspectRatio;
-            camera.updateProjectionMatrix();
-
-            if ( !this.cameraLookAt && !this.cameraPosition && !this.cameraRotation && !this.cameraUp ) {
-                if (this.isLoaded) {
-                    return this.toFront();
-                }
-            } else {
-
-                camera.position.set( this.cameraPosition.x, this.cameraPosition.y, this.cameraPosition.z )
-                camera.rotation.set( this.cameraRotation.x, this.cameraRotation.y, this.cameraRotation.z )
-                camera.up.set( this.cameraUp.x, this.cameraUp.y, this.cameraUp.z )
-
-                camera.lookAt( new Vector3( this.cameraLookAt.x, this.cameraLookAt.y, this.cameraLookAt.z ) )
-
+            if (this.isLoaded) {
+                this.camera.aspect = this.aspectRatio;
+                this.camera.updateProjectionMatrix();
             }
-
         },
         updateLights(_light ) {
             _light = _light ? _light : this.lights;
@@ -436,10 +420,10 @@ export default {
 
                 if ( this.controls ) return;
 
-                // this.controls = new TrackballControls( this.camera, this.$el );
                 this.controls = new OrbitControls( this.camera, this.$el );
-                // this.controls.type = 'orbit';
-                this.controls.type = 'trackball';
+                this.controls.type = 'orbit';
+                // this.controls = new TrackballControls( this.camera, this.$el );
+                // this.controls.type = 'trackball';
 
             } else {
 
@@ -508,6 +492,7 @@ export default {
             this.wrapper.position.copy( center.negate() )
 
             this.updateCamera()
+            this.toFront()
             // this.updateModel()
 
             this.objectsCount = 0;
@@ -567,6 +552,25 @@ export default {
                     [0,this.apparentHorizon,this.targetObjs.distance]
                 );
             }
+        },
+        resetViewPoint(){
+            this.camera.position.set( 
+                this.cameraPosition.x, 
+                this.cameraPosition.y, 
+                this.cameraPosition.z )
+            this.camera.rotation.set( 
+                this.cameraRotation.x, 
+                this.cameraRotation.y, 
+                this.cameraRotation.z )
+            this.camera.up.set( 
+                this.cameraUp.x, 
+                this.cameraUp.y, 
+                this.cameraUp.z )
+
+            this.camera.lookAt( new Vector3( 
+                this.cameraLookAt.x, 
+                this.cameraLookAt.y, 
+                this.cameraLookAt.z ) )
         },
         updateViewPoint(pos=null, up=null, eye=null){
             pos = pos || [0,this.apparentHorizon,this.targetObjs.distance];

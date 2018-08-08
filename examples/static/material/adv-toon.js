@@ -16,8 +16,8 @@ export function advToon() {
     
     // let count = new FloatNode(0.2);
     let sceneDirectLight = new LightNode();
-    // let color = new ColorNode(0xf8eaec);
-    let color = new ColorNode(0xebc795);
+    let color = new ColorNode(0xf8eaec);
+    // let color = new ColorNode(0xebc795);
     // let color = new ColorNode(0xCC9F62);
     let lineColor = new ColorNode(0x2B1C17);
     let lineSize = new FloatNode(0.12);

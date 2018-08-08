@@ -70,13 +70,12 @@ export function envmapsHdr() {
         renderer.toneMappingExposure = 1.9;
 
         let mtl = new MeshStandardMaterial({
-            color: 0xebc795,
+            // color: 0xebc795,
+            color: 0xf8eaec,
             metalness: 0.0,
             roughness: 0.54,
             envMap: hdrCubeRenderTarget.texture
         });
         EventHub.$emit('setmaterial', mtl, lights);
-        // EventHub.$emit('updatelights', lights);
-
     });
 }
