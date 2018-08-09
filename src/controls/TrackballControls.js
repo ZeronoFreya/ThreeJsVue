@@ -171,6 +171,7 @@ const TrackballControls = function ( object, domElement ) {
 				_eye.copy( _this.object.position ).sub( _this.target );
 
 				eyeDirection.copy( _eye ).normalize();
+				
 				objectUpDirection.copy( _this.object.up ).normalize();
 				
 				objectSidewaysDirection.crossVectors( objectUpDirection, eyeDirection ).normalize();
@@ -185,12 +186,21 @@ const TrackballControls = function ( object, domElement ) {
 				quaternion.setFromAxisAngle( axis, angle );
 
 				_eye.applyQuaternion( quaternion );
-				_this.object.up.applyQuaternion( quaternion );
+				// _this.object.up.applyQuaternion( quaternion );	
+
+				// console.log(_this.object.up);
+				// let _y = (Math.pow(_eye.x, 2) + Math.pow(_eye.z, 2)) / _eye.y + _eye.y;
+				// // let _v = new THREE.Vector3(-_eye.x, _y - _eye.y, -_eye.z)
+				// let _v = new THREE.Vector3(0, _y, 0);
+				// _v.sub(_eye).normalize();
+				// // _this.object.up.set(_v.x, _v.y, _v.z);
+				// _this.object.up.copy(_v);
+				
 
 				_lastAxis.copy( axis );
 				_lastAngle = angle;
 
-			} else if ( ! _this.staticMoving && _lastAngle ) {
+			} else if ( false && ! _this.staticMoving && _lastAngle ) {
 
 				_lastAngle *= Math.sqrt( 1.0 - _this.dynamicDampingFactor );
 				_eye.copy( _this.object.position ).sub( _this.target );

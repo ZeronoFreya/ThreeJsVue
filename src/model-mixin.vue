@@ -29,7 +29,7 @@ import {
 } from 'three'
 import { getSize, getCenter } from './util'
 import { OrbitControls } from './controls/OrbitControls'
-// import { TrackballControls } from './controls/TrackballControls.js'
+import { TrackballControls } from './controls/TrackballControls.js'
 import { pathJoin } from "./base";
 
 const suportWebGL = ( () => {
@@ -420,10 +420,10 @@ export default {
 
                 if ( this.controls ) return;
 
-                this.controls = new OrbitControls( this.camera, this.$el );
-                this.controls.type = 'orbit';
-                // this.controls = new TrackballControls( this.camera, this.$el );
-                // this.controls.type = 'trackball';
+                // this.controls = new OrbitControls( this.camera, this.$el );
+                // this.controls.type = 'orbit';
+                this.controls = new TrackballControls( this.camera, this.$el );
+                this.controls.type = 'trackball';
 
             } else {
 
