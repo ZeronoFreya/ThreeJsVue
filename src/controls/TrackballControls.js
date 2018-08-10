@@ -195,8 +195,27 @@ const TrackballControls = function ( object, domElement ) {
 				// _v.sub(_eye).normalize();
 				// // _this.object.up.set(_v.x, _v.y, _v.z);
 				// _this.object.up.copy(_v);
-				
 
+				
+				// let f1 = new THREE.Vector3();
+				// f1.copy(_eye).normalize();
+				// if (f1.y>0) {
+				// 	console.log('------------------');
+					
+				// 	console.log(f1);
+					
+				// 	let f2 = new THREE.Vector3(f1.x, 0, f1.z);
+				// 	let f3 = new THREE.Vector3();
+				// 	let f4 = new THREE.Vector3(0, f1.y, 0);
+				// 	f3.crossVectors(f4, f2).normalize();
+
+				// 	let f5 = new THREE.Vector3();
+				// 	f5.crossVectors(f1, f3).normalize();
+
+				// 	console.log(f5);
+				// 	_this.object.up.copy(f5);	
+				// }
+				
 				_lastAxis.copy( axis );
 				_lastAngle = angle;
 
