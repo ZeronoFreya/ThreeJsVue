@@ -158,7 +158,8 @@ const TrackballControls = function ( object, domElement ) {
 			angle;
 
 		return function rotateCamera() {
-
+			// _moveCurr.y = 0;
+			// _movePrev.y = 0;
 			moveDirection.set( _moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y, 0 );
 			// console.log(moveDirection);
 			
@@ -187,34 +188,46 @@ const TrackballControls = function ( object, domElement ) {
 
 				_eye.applyQuaternion( quaternion );
 				// _this.object.up.applyQuaternion( quaternion );	
+				
+				console.log('------------------');
+				console.log(_this.object.up.x, _this.object.up.y, _this.object.up.z);
 
-				// console.log(_this.object.up);
+				// // console.log(_this.object.up);
 				// let _y = (Math.pow(_eye.x, 2) + Math.pow(_eye.z, 2)) / _eye.y + _eye.y;
 				// // let _v = new THREE.Vector3(-_eye.x, _y - _eye.y, -_eye.z)
 				// let _v = new THREE.Vector3(0, _y, 0);
 				// _v.sub(_eye).normalize();
-				// // _this.object.up.set(_v.x, _v.y, _v.z);
-				// _this.object.up.copy(_v);
+				// // // _this.object.up.set(_v.x, _v.y, _v.z);
+				// // _this.object.up.copy(_v);
+
+				// console.log(_v.y);
+				
 
 				
-				// let f1 = new THREE.Vector3();
-				// f1.copy(_eye).normalize();
-				// if (f1.y>0) {
-				// 	console.log('------------------');
-					
-				// 	console.log(f1);
-					
-				// 	let f2 = new THREE.Vector3(f1.x, 0, f1.z);
-				// 	let f3 = new THREE.Vector3();
-				// 	let f4 = new THREE.Vector3(0, f1.y, 0);
-				// 	f3.crossVectors(f4, f2).normalize();
+				let f1 = new THREE.Vector3();
+				f1.copy(_eye).normalize();
+				
+				
+				// let f2 = new THREE.Vector3(f1.x, 0, f1.z);
+				let f3 = new THREE.Vector3();
+				// let f4 = new THREE.Vector3(0, f1.y, 0);
+				let f4 = new THREE.Vector3();
+				let f5 = new THREE.Vector3();
 
-				// 	let f5 = new THREE.Vector3();
-				// 	f5.crossVectors(f1, f3).normalize();
+				if (f1.z>0) {
+					f4.set(0, -1, 0);
+				}else{
+					f4.set(0, 1, 0);
+				}
+				
+				// f3.crossVectors(f4, f2).normalize();
+				f3.crossVectors(f4, f1).normalize();
 
-				// 	console.log(f5);
-				// 	_this.object.up.copy(f5);	
-				// }
+				
+				f5.crossVectors(f3, f1).normalize();
+
+				console.log(f5.x, f5.y, f5.z);
+				_this.object.up.copy(f5);	
 				
 				_lastAxis.copy( axis );
 				_lastAngle = angle;
