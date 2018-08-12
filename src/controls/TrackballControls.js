@@ -184,13 +184,15 @@ const TrackballControls = function ( object, domElement ) {
 
 				axis.crossVectors( moveDirection, _eye ).normalize();
 				angle *= _this.rotateSpeed;
+				
 				quaternion.setFromAxisAngle( axis, angle );
 
 				_eye.applyQuaternion( quaternion );
-				// _this.object.up.applyQuaternion( quaternion );	
+
+				_this.object.up.applyQuaternion( quaternion );	
 				
-				console.log('------------------');
-				console.log(_this.object.up.x, _this.object.up.y, _this.object.up.z);
+				// console.log('------------------');
+				// console.log(_this.object.up.x, _this.object.up.y, _this.object.up.z);
 
 				// // console.log(_this.object.up);
 				// let _y = (Math.pow(_eye.x, 2) + Math.pow(_eye.z, 2)) / _eye.y + _eye.y;
@@ -204,30 +206,24 @@ const TrackballControls = function ( object, domElement ) {
 				
 
 				
-				let f1 = new THREE.Vector3();
-				f1.copy(_eye).normalize();
+				// let f1 = new THREE.Vector3();
+				// f1.copy(_eye).normalize();
 				
-				
-				// let f2 = new THREE.Vector3(f1.x, 0, f1.z);
-				let f3 = new THREE.Vector3();
-				// let f4 = new THREE.Vector3(0, f1.y, 0);
-				let f4 = new THREE.Vector3();
-				let f5 = new THREE.Vector3();
+				// let f3 = new THREE.Vector3();
+				// let f4 = new THREE.Vector3();
+				// let f5 = new THREE.Vector3();
 
-				if (f1.z>0) {
-					f4.set(0, -1, 0);
-				}else{
-					f4.set(0, 1, 0);
-				}
-				
-				// f3.crossVectors(f4, f2).normalize();
-				f3.crossVectors(f4, f1).normalize();
+				// if (f1.y>0) {
+				// 	f4.set(0, 1, 0);
+				// 	f3.crossVectors(f1, f4).normalize();
+				// }else{
+				// 	f4.set(0, -1, 0);
+				// 	f3.crossVectors(f4, f1).normalize();
+				// }
+				// f5.crossVectors(f3, f1).normalize();
 
-				
-				f5.crossVectors(f3, f1).normalize();
+				// _this.object.up.copy(f5);
 
-				console.log(f5.x, f5.y, f5.z);
-				_this.object.up.copy(f5);	
 				
 				_lastAxis.copy( axis );
 				_lastAngle = angle;
