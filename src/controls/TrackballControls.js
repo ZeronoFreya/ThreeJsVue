@@ -177,7 +177,7 @@ const TrackballControls = function ( object, domElement ) {
 			
 			_this.object.up.copy(objectUpDirection);
 		}
-	}() )
+	}() );
 	this.rotateCamera = ( function () {
 
 		var axis = new THREE.Vector3(),
