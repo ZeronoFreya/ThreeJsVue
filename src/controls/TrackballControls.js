@@ -29,6 +29,8 @@ const TrackballControls = function ( object, domElement ) {
 	this.noZoom = false;
 	this.noPan = false;
 
+	this.rotateY = false;
+
 	this.staticMoving = false;
 	this.dynamicDampingFactor = 0.2;
 
@@ -146,7 +148,36 @@ const TrackballControls = function ( object, domElement ) {
 		};
 
 	}() );
+	this.rotateWithY = ( function () {
+		var axis = new THREE.Vector3(0, 1, 0),
+			eyeDirection = new THREE.Vector3(),
+			objectUpDirection = new THREE.Vector3(),
+			eyeAxisNormal = new THREE.Vector3(),
+			t;
+		
+		return function rotateWithY(quaternion) {
+			eyeDirection.copy(_eye).normalize();
+			objectUpDirection.copy(_this.object.up).normalize();
+			objectUpDirection.applyQuaternion(quaternion);
 
+			eyeAxisNormal.crossVectors(eyeDirection, axis).normalize();
+
+			t = (
+				eyeAxisNormal.x * objectUpDirection.x +
+				eyeAxisNormal.y * objectUpDirection.y +
+				eyeAxisNormal.z * objectUpDirection.z) / (
+				Math.pow(eyeAxisNormal.x, 2) +
+				Math.pow(eyeAxisNormal.y, 2) +
+				Math.pow(eyeAxisNormal.z, 2) );
+
+			objectUpDirection.set(
+				objectUpDirection.x - eyeAxisNormal.x * t,
+				objectUpDirection.y - eyeAxisNormal.y * t,
+				objectUpDirection.z - eyeAxisNormal.z * t).normalize();	
+			
+			_this.object.up.copy(objectUpDirection);
+		}
+	}() )
 	this.rotateCamera = ( function () {
 
 		var axis = new THREE.Vector3(),
@@ -189,52 +220,27 @@ const TrackballControls = function ( object, domElement ) {
 
 				_eye.applyQuaternion( quaternion );
 
-				_this.object.up.applyQuaternion( quaternion );	
-				
-				// console.log('------------------');
-				// console.log(_this.object.up.x, _this.object.up.y, _this.object.up.z);
-
-				// // console.log(_this.object.up);
-				// let _y = (Math.pow(_eye.x, 2) + Math.pow(_eye.z, 2)) / _eye.y + _eye.y;
-				// // let _v = new THREE.Vector3(-_eye.x, _y - _eye.y, -_eye.z)
-				// let _v = new THREE.Vector3(0, _y, 0);
-				// _v.sub(_eye).normalize();
-				// // // _this.object.up.set(_v.x, _v.y, _v.z);
-				// // _this.object.up.copy(_v);
-
-				// console.log(_v.y);
-				
-
-				
-				// let f1 = new THREE.Vector3();
-				// f1.copy(_eye).normalize();
-				
-				// let f3 = new THREE.Vector3();
-				// let f4 = new THREE.Vector3();
-				// let f5 = new THREE.Vector3();
-
-				// if (f1.y>0) {
-				// 	f4.set(0, 1, 0);
-				// 	f3.crossVectors(f1, f4).normalize();
-				// }else{
-				// 	f4.set(0, -1, 0);
-				// 	f3.crossVectors(f4, f1).normalize();
-				// }
-				// f5.crossVectors(f3, f1).normalize();
-
-				// _this.object.up.copy(f5);
-
+				// 锁定Y轴
+				if (_this.rotateY) {
+					_this.rotateWithY(quaternion);
+				}else{
+					_this.object.up.applyQuaternion(quaternion);	
+				}
 				
 				_lastAxis.copy( axis );
 				_lastAngle = angle;
 
-			} else if ( false && ! _this.staticMoving && _lastAngle ) {
+			} else if ( ! _this.staticMoving && _lastAngle ) {
 
 				_lastAngle *= Math.sqrt( 1.0 - _this.dynamicDampingFactor );
 				_eye.copy( _this.object.position ).sub( _this.target );
 				quaternion.setFromAxisAngle( _lastAxis, _lastAngle );
 				_eye.applyQuaternion( quaternion );
-				_this.object.up.applyQuaternion( quaternion );
+				if (_this.rotateY) {
+					_this.rotateWithY(quaternion);
+				} else {
+					_this.object.up.applyQuaternion(quaternion);
+				}
 
 			}
 
@@ -632,6 +638,10 @@ const TrackballControls = function ( object, domElement ) {
 
 	}
 
+	this.setRotateY = function (b) {
+		this.rotateY = b;
+	}
+	
 	this.dispose = function () {
 
 		this.domElement.removeEventListener( 'contextmenu', contextmenu, false );

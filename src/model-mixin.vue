@@ -28,7 +28,7 @@ import {
     Mesh
 } from 'three'
 import { getSize, getCenter } from './util'
-import { OrbitControls } from './controls/OrbitControls'
+// import { OrbitControls } from './controls/OrbitControls'
 import { TrackballControls } from './controls/TrackballControls.js'
 import { pathJoin } from "./base";
 
@@ -424,6 +424,7 @@ export default {
                 // this.controls.type = 'orbit';
                 this.controls = new TrackballControls( this.camera, this.$el );
                 this.controls.type = 'trackball';
+                this.controls.rotateY = true;
 
             } else {
 
