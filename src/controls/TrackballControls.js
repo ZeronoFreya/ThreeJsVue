@@ -240,7 +240,6 @@ const TrackballControls = function ( object, domElement ) {
 				} else {
 					_this.object.up.applyQuaternion(quaternion);
 				}
-
 			}
 
 			_movePrev.copy( _moveCurr );
