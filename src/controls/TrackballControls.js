@@ -199,7 +199,7 @@ const TrackballControls = function ( object, domElement ) {
 			
 
 			if ( angle ) {
-
+				
 				_eye.copy( _this.object.position ).sub( _this.target );
 
 				eyeDirection.copy( _eye ).normalize();
@@ -230,8 +230,7 @@ const TrackballControls = function ( object, domElement ) {
 				_lastAxis.copy( axis );
 				_lastAngle = angle;
 
-			} else if ( ! _this.staticMoving && _lastAngle ) {
-
+			} else if ( !_this.staticMoving && _lastAngle > 0.0001 ) {
 				_lastAngle *= Math.sqrt( 1.0 - _this.dynamicDampingFactor );
 				_eye.copy( _this.object.position ).sub( _this.target );
 				quaternion.setFromAxisAngle( _lastAxis, _lastAngle );
@@ -641,7 +640,7 @@ const TrackballControls = function ( object, domElement ) {
 	this.setRotateY = function (b) {
 		this.rotateY = b;
 	}
-	
+
 	this.dispose = function () {
 
 		this.domElement.removeEventListener( 'contextmenu', contextmenu, false );

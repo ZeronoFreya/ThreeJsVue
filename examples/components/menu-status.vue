@@ -7,6 +7,7 @@
 </template>
 <script>
 import { toggleFullscreen } from "../utils/fullScreen";
+import EventHub from "../../src/eventHub";
 export default {
   data() {
     return {
@@ -18,7 +19,11 @@ export default {
         {
           text: "Auto Rotate",
           action: this.autoRotate
-        }
+        },
+        {
+          text: "Rotate Y",
+          action: this.rotateY
+        },
       ]
     };
   },
@@ -32,7 +37,14 @@ export default {
     },
     autoRotate() {
       console.log("autoRotate");
-    }
+    },
+    rotateY() {
+      if(EventHub.controls.rotateY){
+        EventHub.controls.rotateY = false;
+      }else{
+        EventHub.controls.rotateY = true;
+      }
+    },
   }
 };
 </script>
