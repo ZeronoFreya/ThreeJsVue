@@ -15,7 +15,7 @@ export default {
       src:{
         base:'static/models/obj',
         mtls:'',
-        objs:['body.obj','opai.obj']
+        objs:['body.obj','opai.obj','chikubi.obj']
       }
     };
   },
