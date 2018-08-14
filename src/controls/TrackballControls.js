@@ -21,7 +21,7 @@ const TrackballControls = function ( object, domElement ) {
 
 	this.screen = { left: 0, top: 0, width: 0, height: 0 };
 
-	this.rotateSpeed = 1.0;
+	this.rotateSpeed = 2.0;
 	this.zoomSpeed = 1.2;
 	this.panSpeed = 0.3;
 
@@ -31,7 +31,7 @@ const TrackballControls = function ( object, domElement ) {
 
 	this.rotateY = false;
 
-	this.staticMoving = false;
+	this.staticMoving = true;
 	this.dynamicDampingFactor = 0.2;
 
 	this.minDistance = 0;
@@ -186,17 +186,16 @@ const TrackballControls = function ( object, domElement ) {
 			objectUpDirection = new THREE.Vector3(),
 			objectSidewaysDirection = new THREE.Vector3(),
 			moveDirection = new THREE.Vector3(),
-			angle;
+			angle, height, speed,
+			minRotateSpeed = 0.06;
 
 		return function rotateCamera() {
-			// _moveCurr.y = 0;
-			// _movePrev.y = 0;
+			
 			moveDirection.set( _moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y, 0 );
 			// console.log(moveDirection);
 			
 			angle = moveDirection.length();
 			// console.log(angle);
-			
 
 			if ( angle ) {
 				
@@ -214,8 +213,17 @@ const TrackballControls = function ( object, domElement ) {
 				moveDirection.copy( objectUpDirection.add( objectSidewaysDirection ) );
 
 				axis.crossVectors( moveDirection, _eye ).normalize();
-				angle *= _this.rotateSpeed;
 				
+				if (_this.rotateY) {
+					height = parseFloat(Math.abs(eyeDirection.y.toFixed(2)));
+					
+					speed = parseFloat((_this.rotateSpeed * Math.sqrt(1 - Math.pow(height, 2))).toFixed(2));
+					speed = speed < minRotateSpeed ? minRotateSpeed : speed;
+					
+					angle *= speed;
+				}else{
+					angle *= _this.rotateSpeed;
+				}
 				quaternion.setFromAxisAngle( axis, angle );
 
 				_eye.applyQuaternion( quaternion );
