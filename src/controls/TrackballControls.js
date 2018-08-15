@@ -21,13 +21,17 @@ const TrackballControls = function ( object, domElement ) {
 
 	this.screen = { left: 0, top: 0, width: 0, height: 0 };
 
-	this.rotateSpeed = 2.0;
+	this.rotateSpeed = 1.0;
 	this.zoomSpeed = 1.2;
 	this.panSpeed = 0.3;
 
 	this.noRotate = false;
 	this.noZoom = false;
 	this.noPan = false;
+
+	var rotateStart = new THREE.Vector2();
+	var rotateEnd = new THREE.Vector2();
+	var rotateDelta = new THREE.Vector2();
 
 	this.rotateY = false;
 
@@ -148,36 +152,171 @@ const TrackballControls = function ( object, domElement ) {
 		};
 
 	}() );
-	this.rotateWithY = ( function () {
-		var axis = new THREE.Vector3(0, 1, 0),
+	// this.rotateWithY = ( function () {
+	// 	var axis = new THREE.Vector3(0, 1, 0),
+	// 		eyeDirection = new THREE.Vector3(),
+	// 		objectUpDirection = new THREE.Vector3(),
+	// 		eyeAxisNormal = new THREE.Vector3(),
+	// 		t;
+		
+	// 	return function rotateWithY(quaternion) {
+	// 		eyeDirection.copy(_eye).normalize();
+	// 		objectUpDirection.copy(_this.object.up).normalize();
+	// 		objectUpDirection.applyQuaternion(quaternion);
+
+	// 		eyeAxisNormal.crossVectors(eyeDirection, axis).normalize();
+
+	// 		t = (
+	// 			eyeAxisNormal.x * objectUpDirection.x +
+	// 			eyeAxisNormal.y * objectUpDirection.y +
+	// 			eyeAxisNormal.z * objectUpDirection.z) / (
+	// 			Math.pow(eyeAxisNormal.x, 2) +
+	// 			Math.pow(eyeAxisNormal.y, 2) +
+	// 			Math.pow(eyeAxisNormal.z, 2) );
+
+	// 		objectUpDirection.set(
+	// 			objectUpDirection.x - eyeAxisNormal.x * t,
+	// 			objectUpDirection.y - eyeAxisNormal.y * t,
+	// 			objectUpDirection.z - eyeAxisNormal.z * t).normalize();	
+			
+	// 		_this.object.up.copy(objectUpDirection);
+	// 	}
+	// }() );
+	this.rotateOrbit = (function () {
+		var offset = new THREE.Vector3(),
+			// so camera.up is the orbit axis
+			quat = new THREE.Quaternion().setFromUnitVectors(
+				_this.object.up, new THREE.Vector3(0, 1, 0)),
+			quatInverse = quat.clone().inverse(),
+			lastPosition = new THREE.Vector3(),
+			lastQuaternion = new THREE.Quaternion(),
+			rotateDelta = new THREE.Vector2(),
+			rotateDelta2 = new THREE.Vector2(),
+			minAzimuthAngle = -Infinity,
+			maxAzimuthAngle = Infinity,
+			minDistance = 0,
+			maxDistance = Infinity,
+			minPolarAngle = 0,
+			maxPolarAngle = Math.PI,
+			spherical = new THREE.Spherical(),
+			sphericalDelta = new THREE.Spherical(),
+			angle;
+
+		return function rotateOrbit() {
+			// rotateEnd.set(_moveCurr.x, _moveCurr.y);
+			// rotateDelta.subVectors(rotateEnd, rotateStart);
+
+			rotateDelta.set(_moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y);
+
+			if (rotateDelta.length()) {
+				// console.log(rotateDelta);
+				// rotateDelta2.set(_moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y);
+				// console.log(rotateDelta2);
+
+				// rotating across whole screen goes 360 degrees around
+				// rotateLeft(2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed);
+				angle = 2 * Math.PI * rotateDelta.x / _this.screen.width * _this.rotateSpeed;
+				sphericalDelta.theta -= angle;
+
+				// rotating up and down along whole screen attempts to go 360, but limited to 180
+				// rotateUp(2 * Math.PI * rotateDelta.y / _this.screen.height * scope.rotateSpeed);
+				angle = 2 * Math.PI * rotateDelta.y / _this.screen.height * _this.rotateSpeed;
+				sphericalDelta.phi -= angle;
+
+				// rotateStart.copy(rotateEnd);
+
+
+				// let position = _this.object.position;
+
+				// offset.copy(position).sub(scope.target);
+				_eye.copy(_this.object.position).sub(_this.target);
+
+				// rotate offset to "y-axis-is-up" space
+				_eye.applyQuaternion(quat);
+
+				// angle from z-axis around y-axis
+				spherical.setFromVector3(_eye);
+
+				spherical.theta += sphericalDelta.theta;
+				spherical.phi += sphericalDelta.phi;
+
+				// restrict theta to be between desired limits
+				spherical.theta = Math.max(minAzimuthAngle, Math.min(maxAzimuthAngle, spherical.theta));
+
+				// restrict phi to be between desired limits
+				spherical.phi = Math.max(minPolarAngle, Math.min(maxPolarAngle, spherical.phi));
+
+				spherical.makeSafe();
+
+				// restrict radius to be between desired limits
+				spherical.radius = Math.max(minDistance, Math.min(maxDistance, spherical.radius));
+
+				_eye.setFromSpherical(spherical);
+
+				// rotate offset back to "camera-up-vector-is-up" space
+				_eye.applyQuaternion(quatInverse);
+				console.log('-------------------');
+			}
+
+			// rotateDelta.set(_moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y);
+			// console.log(rotateDelta);
+			
+			_movePrev.copy(_moveCurr);
+
+			
+
+		}
+	}());
+	this.rotateTrackball = (function () {
+		var axis = new THREE.Vector3(),
+			quaternion = new THREE.Quaternion(),
 			eyeDirection = new THREE.Vector3(),
 			objectUpDirection = new THREE.Vector3(),
-			eyeAxisNormal = new THREE.Vector3(),
-			t;
-		
-		return function rotateWithY(quaternion) {
-			eyeDirection.copy(_eye).normalize();
-			objectUpDirection.copy(_this.object.up).normalize();
-			objectUpDirection.applyQuaternion(quaternion);
+			objectSidewaysDirection = new THREE.Vector3(),
+			moveDirection = new THREE.Vector3(),
+			angle;
 
-			eyeAxisNormal.crossVectors(eyeDirection, axis).normalize();
+		return function rotateTrackball() {
+			moveDirection.set(_moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y, 0);
+			angle = moveDirection.length();
 
-			t = (
-				eyeAxisNormal.x * objectUpDirection.x +
-				eyeAxisNormal.y * objectUpDirection.y +
-				eyeAxisNormal.z * objectUpDirection.z) / (
-				Math.pow(eyeAxisNormal.x, 2) +
-				Math.pow(eyeAxisNormal.y, 2) +
-				Math.pow(eyeAxisNormal.z, 2) );
+			if (angle) {
 
-			objectUpDirection.set(
-				objectUpDirection.x - eyeAxisNormal.x * t,
-				objectUpDirection.y - eyeAxisNormal.y * t,
-				objectUpDirection.z - eyeAxisNormal.z * t).normalize();	
-			
-			_this.object.up.copy(objectUpDirection);
+				_eye.copy(_this.object.position).sub(_this.target);
+
+				eyeDirection.copy(_eye).normalize();
+
+				objectUpDirection.copy(_this.object.up).normalize();
+
+				objectSidewaysDirection.crossVectors(objectUpDirection, eyeDirection).normalize();
+
+				objectUpDirection.setLength(_moveCurr.y - _movePrev.y);
+				objectSidewaysDirection.setLength(_moveCurr.x - _movePrev.x);
+
+				moveDirection.copy(objectUpDirection.add(objectSidewaysDirection));
+
+				axis.crossVectors(moveDirection, _eye).normalize();
+
+				angle *= _this.rotateSpeed;
+				quaternion.setFromAxisAngle(axis, angle);
+
+				_eye.applyQuaternion(quaternion);
+
+				_this.object.up.applyQuaternion(quaternion);
+
+				_lastAxis.copy(axis);
+				_lastAngle = angle;
+
+			} else if (!_this.staticMoving && _lastAngle > 0.0001) {
+				_lastAngle *= Math.sqrt(1.0 - _this.dynamicDampingFactor);
+				_eye.copy(_this.object.position).sub(_this.target);
+				quaternion.setFromAxisAngle(_lastAxis, _lastAngle);
+				_eye.applyQuaternion(quaternion);
+				_this.object.up.applyQuaternion(quaternion);
+			}
+			_movePrev.copy(_moveCurr);
 		}
-	}() );
+	}());
 	this.rotateCamera = ( function () {
 
 		var axis = new THREE.Vector3(),
@@ -187,7 +326,7 @@ const TrackballControls = function ( object, domElement ) {
 			objectSidewaysDirection = new THREE.Vector3(),
 			moveDirection = new THREE.Vector3(),
 			angle, height, speed,
-			minRotateSpeed = 0.06;
+			minRotateSpeed = 0.1;
 
 		return function rotateCamera() {
 			
@@ -355,7 +494,13 @@ const TrackballControls = function ( object, domElement ) {
 
 		if ( ! _this.noRotate ) {
 
-			_this.rotateCamera();
+			// _this.rotateCamera();
+			if (_this.rotateY) {
+				// _this.rotateWithY(quaternion);
+				_this.rotateOrbit();
+			} else {
+				_this.rotateTrackball();
+			}
 
 		}
 

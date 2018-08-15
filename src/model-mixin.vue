@@ -424,7 +424,7 @@ export default {
                 // this.controls.type = 'orbit';
                 this.controls = new TrackballControls( this.camera, this.$el );
                 this.controls.type = 'trackball';
-                this.controls.rotateY = true;
+                this.controls.rotateY = false;
 
             } else {
 
