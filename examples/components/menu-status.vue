@@ -11,6 +11,7 @@ import EventHub from "../../src/eventHub";
 export default {
   data() {
     return {
+      controlsType: 'orbit',
       btns: [
         {
           text: "Full Screen",
@@ -39,11 +40,8 @@ export default {
       console.log("autoRotate");
     },
     rotateY() {
-      if(EventHub.controls.rotateY){
-        EventHub.controls.rotateY = false;
-      }else{
-        EventHub.controls.rotateY = true;
-      }
+      this.controlsType = this.controlsType == 'orbit' ? 'trackball' : 'orbit';
+      EventHub.controls.switchControls(this.controlsType);
     },
   }
 };

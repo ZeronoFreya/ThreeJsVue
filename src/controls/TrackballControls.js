@@ -29,17 +29,13 @@ const TrackballControls = function ( object, domElement ) {
 	this.noZoom = false;
 	this.noPan = false;
 
-	var rotateStart = new THREE.Vector2();
-	var rotateEnd = new THREE.Vector2();
-	var rotateDelta = new THREE.Vector2();
-
-	this.rotateY = false;
-
 	this.staticMoving = true;
 	this.dynamicDampingFactor = 0.2;
 
 	this.minDistance = 0;
 	this.maxDistance = Infinity;
+
+	
 
 	this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
 
@@ -183,52 +179,26 @@ const TrackballControls = function ( object, domElement ) {
 	// 	}
 	// }() );
 	this.rotateOrbit = (function () {
-		var offset = new THREE.Vector3(),
-			// so camera.up is the orbit axis
-			quat = new THREE.Quaternion().setFromUnitVectors(
+		var quat = new THREE.Quaternion().setFromUnitVectors(
 				_this.object.up, new THREE.Vector3(0, 1, 0)),
 			quatInverse = quat.clone().inverse(),
-			lastPosition = new THREE.Vector3(),
-			lastQuaternion = new THREE.Quaternion(),
 			rotateDelta = new THREE.Vector2(),
-			rotateDelta2 = new THREE.Vector2(),
 			minAzimuthAngle = -Infinity,
 			maxAzimuthAngle = Infinity,
 			minDistance = 0,
 			maxDistance = Infinity,
 			minPolarAngle = 0,
 			maxPolarAngle = Math.PI,
-			spherical = new THREE.Spherical(),
-			sphericalDelta = new THREE.Spherical(),
-			angle;
+			spherical = new THREE.Spherical();
 
 		return function rotateOrbit() {
-			// rotateEnd.set(_moveCurr.x, _moveCurr.y);
-			// rotateDelta.subVectors(rotateEnd, rotateStart);
 
-			rotateDelta.set(_moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y);
-
+			rotateDelta.set(
+				_moveCurr.x - _movePrev.x, 
+				_moveCurr.y - _movePrev.y);
+			
 			if (rotateDelta.length()) {
-				// console.log(rotateDelta);
-				// rotateDelta2.set(_moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y);
-				// console.log(rotateDelta2);
-
-				// rotating across whole screen goes 360 degrees around
-				// rotateLeft(2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed);
-				angle = 2 * Math.PI * rotateDelta.x / _this.screen.width * _this.rotateSpeed;
-				sphericalDelta.theta -= angle;
-
-				// rotating up and down along whole screen attempts to go 360, but limited to 180
-				// rotateUp(2 * Math.PI * rotateDelta.y / _this.screen.height * scope.rotateSpeed);
-				angle = 2 * Math.PI * rotateDelta.y / _this.screen.height * _this.rotateSpeed;
-				sphericalDelta.phi -= angle;
-
-				// rotateStart.copy(rotateEnd);
-
-
-				// let position = _this.object.position;
-
-				// offset.copy(position).sub(scope.target);
+				rotateDelta.multiplyScalar(_this.rotateSpeed);
 				_eye.copy(_this.object.position).sub(_this.target);
 
 				// rotate offset to "y-axis-is-up" space
@@ -237,8 +207,11 @@ const TrackballControls = function ( object, domElement ) {
 				// angle from z-axis around y-axis
 				spherical.setFromVector3(_eye);
 
-				spherical.theta += sphericalDelta.theta;
-				spherical.phi += sphericalDelta.phi;
+				// 水平
+				spherical.theta -= rotateDelta.x;
+
+				// 垂直
+				spherical.phi += rotateDelta.y;
 
 				// restrict theta to be between desired limits
 				spherical.theta = Math.max(minAzimuthAngle, Math.min(maxAzimuthAngle, spherical.theta));
@@ -255,15 +228,9 @@ const TrackballControls = function ( object, domElement ) {
 
 				// rotate offset back to "camera-up-vector-is-up" space
 				_eye.applyQuaternion(quatInverse);
-				console.log('-------------------');
+
+				_movePrev.copy(_moveCurr);
 			}
-
-			// rotateDelta.set(_moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y);
-			// console.log(rotateDelta);
-			
-			_movePrev.copy(_moveCurr);
-
-			
 
 		}
 	}());
@@ -317,84 +284,8 @@ const TrackballControls = function ( object, domElement ) {
 			_movePrev.copy(_moveCurr);
 		}
 	}());
-	this.rotateCamera = ( function () {
-
-		var axis = new THREE.Vector3(),
-			quaternion = new THREE.Quaternion(),
-			eyeDirection = new THREE.Vector3(),
-			objectUpDirection = new THREE.Vector3(),
-			objectSidewaysDirection = new THREE.Vector3(),
-			moveDirection = new THREE.Vector3(),
-			angle, height, speed,
-			minRotateSpeed = 0.1;
-
-		return function rotateCamera() {
-			
-			moveDirection.set( _moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y, 0 );
-			// console.log(moveDirection);
-			
-			angle = moveDirection.length();
-			// console.log(angle);
-
-			if ( angle ) {
-				
-				_eye.copy( _this.object.position ).sub( _this.target );
-
-				eyeDirection.copy( _eye ).normalize();
-				
-				objectUpDirection.copy( _this.object.up ).normalize();
-				
-				objectSidewaysDirection.crossVectors( objectUpDirection, eyeDirection ).normalize();
-
-				objectUpDirection.setLength( _moveCurr.y - _movePrev.y );
-				objectSidewaysDirection.setLength( _moveCurr.x - _movePrev.x );
-
-				moveDirection.copy( objectUpDirection.add( objectSidewaysDirection ) );
-
-				axis.crossVectors( moveDirection, _eye ).normalize();
-				
-				if (_this.rotateY) {
-					height = parseFloat(Math.abs(eyeDirection.y.toFixed(2)));
-					
-					speed = parseFloat((_this.rotateSpeed * Math.sqrt(1 - Math.pow(height, 2))).toFixed(2));
-					speed = speed < minRotateSpeed ? minRotateSpeed : speed;
-					
-					angle *= speed;
-				}else{
-					angle *= _this.rotateSpeed;
-				}
-				quaternion.setFromAxisAngle( axis, angle );
-
-				_eye.applyQuaternion( quaternion );
-
-				// 锁定Y轴
-				if (_this.rotateY) {
-					_this.rotateWithY(quaternion);
-				}else{
-					_this.object.up.applyQuaternion(quaternion);	
-				}
-				
-				_lastAxis.copy( axis );
-				_lastAngle = angle;
-
-			} else if ( !_this.staticMoving && _lastAngle > 0.0001 ) {
-				_lastAngle *= Math.sqrt( 1.0 - _this.dynamicDampingFactor );
-				_eye.copy( _this.object.position ).sub( _this.target );
-				quaternion.setFromAxisAngle( _lastAxis, _lastAngle );
-				_eye.applyQuaternion( quaternion );
-				if (_this.rotateY) {
-					_this.rotateWithY(quaternion);
-				} else {
-					_this.object.up.applyQuaternion(quaternion);
-				}
-			}
-
-			_movePrev.copy( _moveCurr );
-
-		};
-
-	}() );
-
+	
+	this.rotateCamera = this.rotateOrbit;
 
 	this.zoomCamera = function () {
 
@@ -494,13 +385,13 @@ const TrackballControls = function ( object, domElement ) {
 
 		if ( ! _this.noRotate ) {
 
-			// _this.rotateCamera();
-			if (_this.rotateY) {
-				// _this.rotateWithY(quaternion);
-				_this.rotateOrbit();
-			} else {
-				_this.rotateTrackball();
-			}
+			_this.rotateCamera();
+			// if (_this.rotateY) {
+			// 	// _this.rotateWithY(quaternion);
+			// 	_this.rotateOrbit();
+			// } else {
+			// 	_this.rotateTrackball();
+			// }
 
 		}
 
@@ -550,45 +441,23 @@ const TrackballControls = function ( object, domElement ) {
 
 	};
 
-	// listeners
-
-	function keydown( event ) {
-
-		if ( _this.enabled === false ) return;
-
-		window.removeEventListener( 'keydown', keydown );
-
-		_prevState = _state;
-
-		if ( _state !== STATE.NONE ) {
-
-			return;
-
-		} else if ( event.keyCode === _this.keys[ STATE.ROTATE ] && ! _this.noRotate ) {
-
-			_state = STATE.ROTATE;
-
-		} else if ( event.keyCode === _this.keys[ STATE.ZOOM ] && ! _this.noZoom ) {
-
-			_state = STATE.ZOOM;
-
-		} else if ( event.keyCode === _this.keys[ STATE.PAN ] && ! _this.noPan ) {
-
-			_state = STATE.PAN;
-
+	this.switchControls = function (c) {
+		console.log(c);
+		
+		switch (c) {
+			case 'orbit':
+				_this.type = 'orbit';
+				_this.rotateCamera = _this.rotateOrbit;
+				_this.object.up.set(0,1,0);
+				break;		
+			default:
+				_this.type = 'trackball';
+				_this.rotateCamera = _this.rotateTrackball;
+				break;
 		}
-
 	}
 
-	function keyup( event ) {
-
-		if ( _this.enabled === false ) return;
-
-		_state = _prevState;
-
-		window.addEventListener( 'keydown', keydown, false );
-
-	}
+	// listeners
 
 	function mousedown( event ) {
 
@@ -789,9 +658,7 @@ const TrackballControls = function ( object, domElement ) {
 
 	}
 
-	this.setRotateY = function (b) {
-		this.rotateY = b;
-	}
+
 
 	this.dispose = function () {
 
@@ -806,9 +673,6 @@ const TrackballControls = function ( object, domElement ) {
 		document.removeEventListener( 'mousemove', mousemove, false );
 		document.removeEventListener( 'mouseup', mouseup, false );
 
-		window.removeEventListener( 'keydown', keydown, false );
-		window.removeEventListener( 'keyup', keyup, false );
-
 	};
 
 	this.domElement.addEventListener( 'contextmenu', contextmenu, false );
@@ -819,8 +683,6 @@ const TrackballControls = function ( object, domElement ) {
 	this.domElement.addEventListener( 'touchend', touchend, false );
 	this.domElement.addEventListener( 'touchmove', touchmove, false );
 
-	window.addEventListener( 'keydown', keydown, false );
-	window.addEventListener( 'keyup', keyup, false );
 
 	this.handleResize();
 
