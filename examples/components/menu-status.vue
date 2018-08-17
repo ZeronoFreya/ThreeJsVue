@@ -28,6 +28,9 @@ export default {
       ]
     };
   },
+  created() {
+    this.controlsType = EventHub.controltype;
+  },
   methods: {
     runAction(act){
         act();

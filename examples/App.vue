@@ -17,11 +17,13 @@ export default {
             loading: true
         }
     },
-    created() {
+    beforeCreate() {
+        EventHub.controltype = 'orbit';
         EventHub.$on('loading', () => {
             this.loading = !this.loading;
         });
     },
+    created() {},
     methods: {
         onLoad() {
             this.loading = false;
@@ -39,6 +41,7 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-image: linear-gradient(#7d8fa3, #1b1c1e);
+    /* background-image: linear-gradient(#7d8fa3, #1b1c1e); */
+    background-color: #1b1c1e;
 }
 </style>
