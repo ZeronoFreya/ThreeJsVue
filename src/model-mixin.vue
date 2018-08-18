@@ -31,6 +31,7 @@ import { getSize, getCenter } from './util'
 // import { OrbitControls } from './controls/OrbitControls'
 import { TrackballControls } from './controls/TrackballControls.js'
 import { pathJoin } from "./base";
+// import { mapGetters, mapActions } from 'vuex'
 
 const suportWebGL = ( () => {
 
@@ -146,6 +147,9 @@ export default {
         }
     },
     computed: {
+        ctrlType (){
+            return this.$store.state.control;
+        },
         hasListener() {
 
             // 判断是否有鼠标事件监听，用于减少不必要的拾取判断
@@ -230,6 +234,9 @@ export default {
                 this.updateCamera();
                 this.updateRenderer();
             }
+        },
+        ctrlType(){
+            this.updateCtrlType();
         },
         controllable() {
             this.updateControls();
@@ -424,18 +431,18 @@ export default {
                 // this.controls.type = 'orbit';
                 this.controls = new TrackballControls( this.camera, this.$el );
                 // this.controls.type = 'trackball';
-                // this.controls.switchControls('orbit');
+                
+                this.updateCtrlType();
+
             } else {
-
                 if ( this.controls ) {
-
                     this.controls.dispose();
                     this.controls = null;
-
                 }
-
             }
-
+        },
+        updateCtrlType() {
+            this.controls.switchControls(this.ctrlType);
         },
         load() {
 
@@ -540,7 +547,7 @@ export default {
                     mtl: mtl
                 })
             }
-        return objs;
+            return objs;
         },
         setApparentHorizon(hl){
             this.hl = hl;

@@ -77,7 +77,7 @@ export default {
       EventHub.renderer = this.renderer;
       EventHub.camera = this.camera;
       EventHub.controls = this.controls;
-      this.controls.switchControls(EventHub.controltype);
+      // this.controls.switchControls(EventHub.controltype);
     },
     load() {
       if (this.objs.length == 0) return;

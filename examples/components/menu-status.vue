@@ -7,11 +7,10 @@
 </template>
 <script>
 import { toggleFullscreen } from "../utils/fullScreen";
-import EventHub from "../../src/eventHub";
+import { mapMutations } from 'vuex';
 export default {
   data() {
     return {
-      controlsType: 'orbit',
       btns: [
         {
           text: "Full Screen",
@@ -23,13 +22,10 @@ export default {
         },
         {
           text: "Rotate Y",
-          action: this.rotateY
+          action: this.switchCtrl
         },
       ]
-    };
-  },
-  created() {
-    this.controlsType = EventHub.controltype;
+    }
   },
   methods: {
     runAction(act){
@@ -42,10 +38,10 @@ export default {
     autoRotate() {
       console.log("autoRotate");
     },
-    rotateY() {
-      this.controlsType = this.controlsType == 'orbit' ? 'trackball' : 'orbit';
-      EventHub.controls.switchControls(this.controlsType);
-    },
+    // this.$store.commit('switchCtrl')
+    ...mapMutations([
+      'switchCtrl'
+    ])
   }
 };
 </script>

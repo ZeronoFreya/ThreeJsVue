@@ -442,7 +442,7 @@ const TrackballControls = function ( object, domElement ) {
 	};
 
 	this.switchControls = function (c) {
-		console.log(c);
+		console.log('switchControls', c);
 		
 		switch (c) {
 			case 'orbit':
