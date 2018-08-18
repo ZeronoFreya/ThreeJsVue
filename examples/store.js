@@ -4,7 +4,8 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {
-  control: 'orbit'
+  control: 'orbit',
+  viewPoint: 'front'
 }
 
 const mutations = {
@@ -15,6 +16,11 @@ const mutations = {
       c = c !== 'orbit' ? c !== 'trackball' ? 'orbit' : c : c
     }
     state.control = c
+  },
+  setViewPoint: (state, v = 'front') => {
+    if (~['front', 'right', 'top', 'back'].indexOf(v)) {
+      state.viewPoint = v
+    }
   }
 }
 

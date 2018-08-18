@@ -150,6 +150,9 @@ export default {
         ctrlType (){
             return this.$store.state.control;
         },
+        viewPoint (){
+            return this.$store.state.viewPoint;
+        },
         hasListener() {
 
             // 判断是否有鼠标事件监听，用于减少不必要的拾取判断
@@ -237,6 +240,9 @@ export default {
         },
         ctrlType(){
             this.updateCtrlType();
+        },
+        viewPoint(){
+            this.updateViewPoint();
         },
         controllable() {
             this.updateControls();
@@ -579,15 +585,49 @@ export default {
                 this.cameraLookAt.y, 
                 this.cameraLookAt.z ) )
         },
-        updateViewPoint(pos=null, up=null, eye=null){
-            pos = pos || [0,this.apparentHorizon,this.targetObjs.distance];
-            up = up || [0,1,0];
-            eye = eye || [0,this.apparentHorizon,0];
-            this.camera.position.set( pos[0], pos[1], pos[2] );
-            this.camera.up.set( up[0], up[1], up[2] );
-            this.camera.lookAt( eye[0], eye[1], eye[2] );
+        updateViewPoint(target=null){
+
+            const distance = this.distance(target || this.wrapper);
+
+            let pos;
+            let up = new Vector3(0,1,0);
+            let eye = new Vector3(0,this.apparentHorizon,0);
+
+            switch (this.viewPoint) {
+                case 'front':
+                    pos = new Vector3( 0, this.apparentHorizon, distance );
+                    break;
+                case 'right':
+                    pos = new Vector3( -distance, this.apparentHorizon, 0 );
+                    break;
+                case 'top':
+                    pos = new Vector3( 0, distance, 0 );
+                    up.set(0,0,-1);
+                    break;
+                case 'back':
+                    // pos = this.camera.position;
+                    // let x = pos.x, y = pos.y, z = pos.z;
+                    let [x,y,z] = [...this.camera.position];
+                    if (x == 0 && z == 0){
+                        y *= -1;
+                    }else{
+                        x *= -1;
+                        z *= -1;
+                    }
+                    pos = new Vector3( x, y, z );
+                    break;
+                default:
+                    break;
+            }
+
+            // pos = pos || [0,this.apparentHorizon,this.targetObjs.distance];
+            // up = up || [0,1,0];
+            // eye = eye || [0,this.apparentHorizon,0];
+            this.camera.position.copy( pos );
+            this.camera.up.copy( up );
+            this.camera.lookAt( eye );
             if (this.controls) {
-                this.controls.target.set( eye[0], eye[1], eye[2] );
+                this.controls.target.copy( eye );
             }
         },
         distance(target){
@@ -611,9 +651,8 @@ export default {
         },
         toFront(target=null){
             const distance = this.distance(target || this.wrapper);
-            this.updateViewPoint(
-                [0, this.apparentHorizon, distance]
-            );
+            let pos = new Vector3( 0, this.apparentHorizon, distance );
+            this.updateViewPoint( pos );
         },
         toRight(target=null){
             const distance = this.distance(target || this.wrapper);
