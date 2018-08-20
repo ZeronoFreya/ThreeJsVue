@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 const state = {
   control: 'orbit',
-  viewPoint: 'front'
+  viewPoint: 'front',
+  rateApparentHorizon: 0.00  // 视平线的比率（-100% ~ 100%）
 }
 
 const mutations = {
@@ -21,6 +22,9 @@ const mutations = {
     if (~['front', 'right', 'top', 'back'].indexOf(v)) {
       state.viewPoint = v
     }
+  },
+  setRateApparentHorizon: (state, v) => {
+    state.rateApparentHorizon = parseFloat(v)
   }
 }
 

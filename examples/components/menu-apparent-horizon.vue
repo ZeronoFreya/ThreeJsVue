@@ -6,7 +6,8 @@
     </div>
 </template>
 <script>
-import EventHub from "../../src/eventHub";
+// import EventHub from "../../src/eventHub";
+// import { mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -16,7 +17,8 @@ export default {
   methods: {
     change() {
       let per = parseInt(this.value)/100;
-      EventHub.$emit("setapparenthorizon", per);
+      // EventHub.$emit("setapparenthorizon", per);
+      this.$store.commit('setRateApparentHorizon', per)
     }
   },
   created(){

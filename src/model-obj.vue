@@ -3,13 +3,14 @@ import { OBJLoader } from "./loaders/OBJLoader";
 import { MTLLoader } from "./loaders/MTLLoader";
 import { toIndexed } from "./util";
 import mixin from "./model-mixin.vue";
+import cameraPlugin from "./model-camera-plugin";
 
 
 import EventHub from './eventHub';
 
 export default {
   name: "model-obj",
-  mixins: [mixin],
+  mixins: [mixin, cameraPlugin],
   props: {
     src: {
       type: Object,
@@ -33,18 +34,6 @@ export default {
       this.setMaterial( mtl);
       this.updateLights( lights );
       EventHub.$emit('loading');
-    });
-    EventHub.$on('tofront', (target=null) => {
-      this.toFront( target );
-    });
-    EventHub.$on('toright', (target=null) => {
-      this.toRight( target );
-    });
-    EventHub.$on('totop', (target=null) => {
-      this.toTop( target );
-    });
-    EventHub.$on('toback', () => {
-      this.toBack();
     });
     EventHub.$on('setapparenthorizon', (hl) => {
       this.setApparentHorizon(hl);

@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import EventHub from "../../src/eventHub";
+// import EventHub from "../../src/eventHub";
 import { mapMutations } from 'vuex';
 export default {
     data() {
@@ -59,15 +59,15 @@ export default {
             this.$emit('closeMenu');
         },
         toRight(){
-            EventHub.$emit('toright',null);
+            this.setViewPoint('right');
             this.$emit('closeMenu');
         },
         toTop(){
-            EventHub.$emit('totop',null);
+            this.setViewPoint('top');
             this.$emit('closeMenu');
         },
         toBack(){
-            EventHub.$emit('toback');
+            this.setViewPoint('back');
             this.$emit('closeMenu');
         },
         ...mapMutations([
