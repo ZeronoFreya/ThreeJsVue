@@ -12,16 +12,16 @@ export default {
   data() {
     return {
       bgAlpha: 0,
-      src:{
-        base:'static/models/obj',
-        mtls:'',
-        objs:['body.obj','opai.obj','chikubi.obj']
+      src: {
+        base: "static/models/obj",
+        mtls: "",
+        objs: ["body.obj", "opai.obj", "chikubi.obj"]
       }
     };
   },
   methods: {
     onLoad() {
-        this.$emit('on-load')
+      this.$emit("on-load");
     }
   },
   components: {

@@ -394,8 +394,13 @@ export default {
             this.wrapper.position.copy(center.negate());
 
             // this.updateCamera();
-
-            this.updateViewPoint();
+              
+            let camera = this.$store.state.camera;
+            if (camera.pos.length() === 0) {
+                let distance = this.distance(this.wrapper);
+                camera.pos.setZ(distance);
+            } 
+            this.updateViewPoint(camera);
             // this.toFront()
             // this.updateModel()
 
@@ -436,14 +441,10 @@ export default {
 
             this.loadEnd();
         },
-        updateViewPoint(target = this.wrapper){
-            if (this.cameraPosition.length() === 0) {
-                let distance = this.distance(target);
-                this.cameraPosition.setZ(distance);
-            }            
-            this.camera.position.copy(this.cameraPosition);
-            this.camera.up.copy(this.cameraUp);
-            this.camera.lookAt(this.cameraLookAt);
+        updateViewPoint(camera){
+            this.camera.position.copy(camera.pos);
+            this.camera.up.copy(camera.up);
+            this.camera.lookAt(camera.eye);
         },
         setMaterial(mtl, objects = this.allObjects) {
             let object;

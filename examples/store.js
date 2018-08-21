@@ -5,8 +5,13 @@ Vue.use(Vuex);
 
 const state = {
     control: "orbit",
-    viewPoint: "front",
-    rateApparentHorizon: 0.0 // 视平线的比率（-100% ~ 100%）
+    facedPlane: "front",
+    rateApparentHorizon: 0.0, // 视平线的比率（-100% ~ 100%）
+    camera: {
+        eye: new Vector3(),
+        pos: new Vector3(),
+        up: new Vector3(0, 1, 0)
+    }
 };
 
 const mutations = {
@@ -18,10 +23,13 @@ const mutations = {
         }
         state.control = c;
     },
-    setViewPoint: (state, v = "front") => {
-        if (~["front", "right", "top", "free", "back"].indexOf(v)) {
-            state.viewPoint = v;
+    lookThreeView:(state, v)=>{
+        if (~["front", "right", "top", "back"].indexOf(v)) {
+            state.facedPlane = v;
         }
+    },
+    setViewPoint: (state, camera) => {
+        state.camera = camera;
     },
     setRateApparentHorizon: (state, v) => {
         state.rateApparentHorizon = parseFloat(v);

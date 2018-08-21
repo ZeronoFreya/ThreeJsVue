@@ -1,7 +1,6 @@
 <script>
 import { Vector3 } from "three";
 
-
 export default {
     data() {
         return {
@@ -11,16 +10,16 @@ export default {
         };
     },
     computed: {
-        viewPoint() {
-            return this.$store.state.viewPoint;
+        facedPlane() {
+            return this.$store.state.facedPlane;
         },
         rateApparentHorizon() {
             return this.$store.state.rateApparentHorizon;
         }
     },
     watch: {
-        viewPoint() {
-            this.updateViewPoint();
+        facedPlane() {
+            this.threeView();
         },
         rateApparentHorizon() {
             this.setRateApparentHorizon();
@@ -42,26 +41,30 @@ export default {
             }
         },
         front(distance) {
-            let up = new Vector3(0, 1, 0);
-            let eye = new Vector3(0, this.apparentHorizon, 0);
-            let pos = new Vector3(0, this.apparentHorizon, distance);
-            return [up, pos, eye];
+            return {
+                eye: new Vector3(0, this.apparentHorizon, 0),
+                pos: new Vector3(0, this.apparentHorizon, distance),
+                up: new Vector3(0, 1, 0)
+            };
         },
         top(distance) {
-            let up = new Vector3(0, 0, -1);
-            let eye = new Vector3(0, this.apparentHorizon, 0);
-            let pos = new Vector3(0, distance, 0);
-            return [up, pos, eye];
+            return {
+                eye: new Vector3(0, this.apparentHorizon, 0),
+                pos: new Vector3(0, distance, 0),
+                up: new Vector3(0, 0, -1)
+            };
         },
         right(distance) {
-            let up = new Vector3(0, 1, 0);
-            let eye = new Vector3(0, this.apparentHorizon, 0);
-            let pos = new Vector3(-distance, this.apparentHorizon, 0);
+            return {
+                eye: new Vector3(0, this.apparentHorizon, 0),
+                pos: new Vector3(-distance, this.apparentHorizon, 0),
+                up: new Vector3(0, 1, 0)
+            };
+        },
+        free() {
             return [up, pos, eye];
         },
         back() {
-            let up = new Vector3(0, 1, 0);
-            let eye = new Vector3(0, this.apparentHorizon, 0);
             let { x, y, z } = this.camera.position;
             if (x == 0 && z == 0) {
                 y *= -1;
@@ -69,19 +72,25 @@ export default {
                 x *= -1;
                 z *= -1;
             }
-            let pos = new Vector3(x, y, z);
-            return [up, pos, eye];
+            return {
+                eye: new Vector3(0, this.apparentHorizon, 0),
+                pos: new Vector3(x, y, z),
+                up: new Vector3(0, 1, 0)
+            };
         },
-        updateViewPoint(target = this.wrapper) {
-            let viewPoint = this.funMap.get(this.viewPoint);
-            if (viewPoint === undefined) {
+        threeView(target = this.wrapper) {
+            let facedPlane = this.funMap.get(this.facedPlane);
+            if (facedPlane === undefined) {
                 return;
             }
             let distance = this.distance(target);
-            let [up, pos, eye] = viewPoint(distance);
-            this.camera.position.copy(pos);
-            this.camera.up.copy(up);
-            this.camera.lookAt(eye);
+            let camera = facedPlane(distance);
+            return this.updateViewPoint(camera);
+        },
+        updateViewPoint(camera) {
+            this.camera.position.copy(camera.pos);
+            this.camera.up.copy(camera.up);
+            this.camera.lookAt(camera.eye);
             // if (this.controls) {
             //     this.controls.target.copy(eye);
             // }
