@@ -12,7 +12,6 @@
 <script>
 import {
     Object3D,
-    Vector2,
     Vector3,
     Color,
     Scene,
@@ -23,12 +22,11 @@ import {
     PointLight,
     HemisphereLight,
     DirectionalLight,
-    MeshBasicMaterial,
     Mesh
 } from "three";
 import { getSize, getCenter } from "./util";
 // import { OrbitControls } from './controls/OrbitControls'
-import { TrackballControls } from "./controls/TrackballControls.js";
+// import { TrackballControls } from "./controls/TrackballControls.js";
 import { pathJoin } from "./base";
 
 const suportWebGL = (() => {
@@ -94,16 +92,25 @@ export default {
             }
         },
         cameraPosition: {
-            type: Object
+            type: Object,
+            default() {
+                return new Vector3(0, 0, 0);
+            }
         },
         cameraRotation: {
             type: Object
         },
         cameraUp: {
-            type: Object
+            type: Object,
+            default() {
+                return new Vector3(0, 1, 0);
+            }
         },
         cameraLookAt: {
-            type: Object
+            type: Object,
+            default() {
+                return new Vector3(0, 0, 0);
+            }
         },
         backgroundColor: {
             default: 0xffffff
@@ -111,64 +118,45 @@ export default {
         backgroundAlpha: {
             type: Number,
             default: 1
-        },
-        controllable: {
-            type: Boolean,
-            default: true
         }
     },
     data() {
         return {
+            // 场景
             suportWebGL,
+            scene: new Scene(),
+            renderer: null,
             size: {
                 width: this.width,
                 height: this.height
             },
-            targetObjs: {
-                objs: null,
-                size: null,
-                distance: 0
-            },
+            // 摄像机
             vertFOV: 45,
             aspectRatio: 1,
-            objectsCount: 0,
-            isLoaded: false,
-            allObjects: [],
-            raycaster: new Raycaster(),
-            mouse: new Vector2(),
             camera: new PerspectiveCamera(
                 this.vertFOV,
                 this.aspectRatio,
                 0.01,
                 8000
             ),
-            scene: new Scene(),
+            raycaster: new Raycaster(),
+            // 模型
+            asyncModelsCount: 0,
+            isLoaded: false,
+            allObjects: [],
+            targetObjs: {
+                objs: null,
+                size: null,
+                distance: 0
+            },
             wrapper: new Object3D(),
-            renderer: null,
-            controls: null,
+            // 灯光
             allLights: [],
-            clock: typeof performance === "undefined" ? Date : performance,
+            // clock: typeof performance === "undefined" ? Date : performance,
             reqId: null // requestAnimationFrame id
         };
     },
-    computed: {
-        ctrlType() {
-            return this.$store.state.control;
-        },
-        hasListener() {
-            // 判断是否有鼠标事件监听，用于减少不必要的拾取判断
-            const events = this._events;
-            const result = {};
-
-            ["on-mousemove", "on-mouseup", "on-mousedown", "on-click"].forEach(
-                name => {
-                    result[name] = !!events[name] && events[name].length > 0;
-                }
-            );
-
-            return result;
-        }
-    },
+    computed: {},
     mounted() {
         if (this.width === undefined || this.height === undefined) {
             this.size = {
@@ -188,12 +176,9 @@ export default {
         this.scene.add(this.wrapper);
 
         this.load();
-        this.update();
 
-        this.$el.addEventListener("mousedown", this.onMouseDown, false);
-        this.$el.addEventListener("mousemove", this.onMouseMove, false);
-        this.$el.addEventListener("mouseup", this.onMouseUp, false);
-        this.$el.addEventListener("click", this.onClick, false);
+        
+        this.update();
 
         window.addEventListener("resize", this.onResize, false);
 
@@ -201,11 +186,6 @@ export default {
     },
     beforeDestroy() {
         cancelAnimationFrame(this.reqId);
-
-        this.$el.removeEventListener("mousedown", this.onMouseDown, false);
-        this.$el.removeEventListener("mousemove", this.onMouseMove, false);
-        this.$el.removeEventListener("mouseup", this.onMouseUp, false);
-        this.$el.removeEventListener("click", this.onClick, false);
 
         window.removeEventListener("resize", this.onResize, false);
     },
@@ -241,12 +221,6 @@ export default {
                 this.updateRenderer();
             }
         },
-        ctrlType() {
-            this.updateCtrlType();
-        },
-        controllable() {
-            this.updateControls();
-        },
         backgroundAlpha() {
             this.updateRenderer();
         },
@@ -268,50 +242,6 @@ export default {
                     this.aspectRatio = this.size.width / this.size.height;
                 });
             }
-        },
-        onMouseDown(event) {
-            if (!this.hasListener["on-mousedown"]) return;
-
-            const intersected = this.pick(event.clientX, event.clientY);
-            this.$emit("on-mousedown", intersected);
-        },
-        onMouseMove(event) {
-            if (!this.hasListener["on-mousemove"]) return;
-
-            const intersected = this.pick(event.clientX, event.clientY);
-            this.$emit("on-mousemove", intersected);
-        },
-        onMouseUp(event) {
-            if (!this.hasListener["on-mouseup"]) return;
-
-            const intersected = this.pick(event.clientX, event.clientY);
-            this.$emit("on-mouseup", intersected);
-        },
-        onClick(event) {
-            if (!this.hasListener["on-click"]) return;
-
-            const intersected = this.pick(event.clientX, event.clientY);
-            this.$emit("on-click", intersected);
-        },
-        pick(x, y) {
-            if (!this.object) return;
-
-            const rect = this.$el.getBoundingClientRect();
-
-            x -= rect.left;
-            y -= rect.top;
-
-            this.mouse.x = x / this.size.width * 2 - 1;
-            this.mouse.y = -(y / this.size.height) * 2 + 1;
-
-            this.raycaster.setFromCamera(this.mouse, this.camera);
-
-            const intersects = this.raycaster.intersectObject(
-                this.object,
-                true
-            );
-
-            return (intersects && intersects.length) > 0 ? intersects[0] : null;
         },
         update() {
             this.updateRenderer();
@@ -341,10 +271,10 @@ export default {
             renderer.setClearAlpha(this.backgroundAlpha);
         },
         updateCamera() {
-            if (this.isLoaded) {
+            // if (this.isLoaded) {
                 this.camera.aspect = this.aspectRatio;
                 this.camera.updateProjectionMatrix();
-            }
+            // }
         },
         updateLights(_light) {
             _light = _light ? _light : this.lights;
@@ -415,28 +345,6 @@ export default {
                 this.scene.add(light);
             });
         },
-        updateControls() {
-            if (this.controllable && this.controls) return;
-
-            if (this.controllable) {
-                if (this.controls) return;
-
-                // this.controls = new OrbitControls( this.camera, this.$el );
-                // this.controls.type = 'orbit';
-                this.controls = new TrackballControls(this.camera, this.$el);
-                // this.controls.type = 'trackball';
-
-                this.updateCtrlType();
-            } else {
-                if (this.controls) {
-                    this.controls.dispose();
-                    this.controls = null;
-                }
-            }
-        },
-        updateCtrlType() {
-            this.controls.switchControls(this.ctrlType);
-        },
         load() {
             if (this.src.length == 0) return;
 
@@ -471,11 +379,11 @@ export default {
             }
         },
         loadStart() {
-            this.objectsCount += 1;
+            this.asyncModelsCount += 1;
         },
         loadEnd() {
-            this.objectsCount -= 1;
-            if (this.objectsCount == 0) {
+            this.asyncModelsCount -= 1;
+            if (this.asyncModelsCount == 0) {
                 this.allLoaded();
             }
         },
@@ -485,20 +393,41 @@ export default {
             // correction position
             this.wrapper.position.copy(center.negate());
 
-            this.updateCamera();
+            // this.updateCamera();
 
             this.updateViewPoint();
             // this.toFront()
             // this.updateModel()
 
-            this.objectsCount = 0;
+            this.asyncModelsCount = 0;
 
             this.$emit("on-load");
 
             this.animate();
+            // this.render();
         },
         getObject(object) {
             return object;
+        },
+        distance(target) {
+            if (this.targetObjs.objs === target) {
+                this.apparentHorizon = this.hl * (this.targetObjs.size.y / 2);
+                return this.targetObjs.distance;
+            }
+            const size = getSize(target);
+
+            let len =
+                this.aspectRatio < size.x / size.y ? size.x / 2 : size.y / 2;
+
+            let dis =
+                len / Math.tan(this.vertFOV / 2 * Math.PI / 180) + size.z / 2;
+
+            this.targetObjs.objs = target;
+            this.targetObjs.size = size;
+            this.targetObjs.distance = dis;
+            this.apparentHorizon = this.hl * (size.y / 2);
+            return dis;
+            // const distance = getSize( this.wrapper ).length();
         },
         addObject(object) {
             this.object = object;
@@ -506,6 +435,15 @@ export default {
             this.wrapper.add(object);
 
             this.loadEnd();
+        },
+        updateViewPoint(target = this.wrapper){
+            if (this.cameraPosition.length() === 0) {
+                let distance = this.distance(target);
+                this.cameraPosition.setZ(distance);
+            }            
+            this.camera.position.copy(this.cameraPosition);
+            this.camera.up.copy(this.cameraUp);
+            this.camera.lookAt(this.cameraLookAt);
         },
         setMaterial(mtl, objects = this.allObjects) {
             let object;
@@ -537,10 +475,7 @@ export default {
             }
             return objs;
         },
-        
-        
-        
-        
+
         buildOver() {},
         animate() {
             this.reqId = requestAnimationFrame(this.animate);
