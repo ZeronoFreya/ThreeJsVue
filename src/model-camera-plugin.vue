@@ -19,7 +19,9 @@ export default {
     },
     watch: {
         facedPlane() {
-            this.threeView();
+            if (this.facedPlane) {
+                this.threeView();
+            }
         },
         rateApparentHorizon() {
             this.setRateApparentHorizon();
@@ -42,27 +44,24 @@ export default {
         },
         front(distance) {
             return {
-                eye: new Vector3(0, this.apparentHorizon, 0),
+                lookat: new Vector3(0, this.apparentHorizon, 0),
                 pos: new Vector3(0, this.apparentHorizon, distance),
                 up: new Vector3(0, 1, 0)
             };
         },
         top(distance) {
             return {
-                eye: new Vector3(0, this.apparentHorizon, 0),
+                lookat: new Vector3(0, this.apparentHorizon, 0),
                 pos: new Vector3(0, distance, 0),
                 up: new Vector3(0, 0, -1)
             };
         },
         right(distance) {
             return {
-                eye: new Vector3(0, this.apparentHorizon, 0),
+                lookat: new Vector3(0, this.apparentHorizon, 0),
                 pos: new Vector3(-distance, this.apparentHorizon, 0),
                 up: new Vector3(0, 1, 0)
             };
-        },
-        free() {
-            return [up, pos, eye];
         },
         back() {
             let { x, y, z } = this.camera.position;
@@ -73,27 +72,23 @@ export default {
                 z *= -1;
             }
             return {
-                eye: new Vector3(0, this.apparentHorizon, 0),
+                lookat: new Vector3(0, this.apparentHorizon, 0),
                 pos: new Vector3(x, y, z),
                 up: new Vector3(0, 1, 0)
             };
         },
         threeView(target = this.wrapper) {
+            console.log(this.facedPlane);
             let facedPlane = this.funMap.get(this.facedPlane);
             if (facedPlane === undefined) {
                 return;
             }
             let distance = this.distance(target);
             let camera = facedPlane(distance);
-            return this.updateViewPoint(camera);
-        },
-        updateViewPoint(camera) {
-            this.camera.position.copy(camera.pos);
-            this.camera.up.copy(camera.up);
-            this.camera.lookAt(camera.eye);
-            // if (this.controls) {
-            //     this.controls.target.copy(eye);
-            // }
+            this.updateViewPoint(camera);
+            this.$store.commit('lookThreeView');
+            console.log(this.facedPlane);
+                     
         },
         resetViewPoint() {
             this.camera.position.set(

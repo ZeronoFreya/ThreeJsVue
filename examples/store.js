@@ -1,14 +1,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import { Vector3 } from "three";
 
 Vue.use(Vuex);
 
 const state = {
     control: "orbit",
-    facedPlane: "front",
+    facedPlane: "",
     rateApparentHorizon: 0.0, // 视平线的比率（-100% ~ 100%）
     camera: {
-        eye: new Vector3(),
+        lookat: new Vector3(),
         pos: new Vector3(),
         up: new Vector3(0, 1, 0)
     }
@@ -23,10 +24,11 @@ const mutations = {
         }
         state.control = c;
     },
-    lookThreeView:(state, v)=>{
-        if (~["front", "right", "top", "back"].indexOf(v)) {
-            state.facedPlane = v;
-        }
+    lookThreeView: (state, v = "") => {
+        // if (~["front", "right", "top", "back"].indexOf(v)) {
+        //     state.facedPlane = v;
+        // }
+        state.facedPlane = v;
     },
     setViewPoint: (state, camera) => {
         state.camera = camera;

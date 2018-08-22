@@ -247,7 +247,6 @@ export default {
             this.updateRenderer();
             this.updateCamera();
             this.updateLights(this.lights);
-            this.updateControls();
         },
         updateModel() {
             const object = this.object;
@@ -394,12 +393,16 @@ export default {
             this.wrapper.position.copy(center.negate());
 
             // this.updateCamera();
-              
-            let camera = this.$store.state.camera;
-            if (camera.pos.length() === 0) {
-                let distance = this.distance(this.wrapper);
-                camera.pos.setZ(distance);
-            } 
+            const dis = this.distance(this.wrapper);
+            let y = -center.y;
+            let x = Math.sqrt(
+                (Math.pow(dis, 2)-Math.pow(y, 2))/2
+            );
+            let camera = {
+                lookat: new Vector3(),
+                pos: new Vector3(x,y,x),
+                up: new Vector3(0, 1, 0)
+            };
             this.updateViewPoint(camera);
             // this.toFront()
             // this.updateModel()
@@ -408,8 +411,8 @@ export default {
 
             this.$emit("on-load");
 
-            this.animate();
-            // this.render();
+            // this.animate();
+            this.render();
         },
         getObject(object) {
             return object;
@@ -444,7 +447,8 @@ export default {
         updateViewPoint(camera){
             this.camera.position.copy(camera.pos);
             this.camera.up.copy(camera.up);
-            this.camera.lookAt(camera.eye);
+            this.camera.lookAt(camera.lookat);
+            this.render();
         },
         setMaterial(mtl, objects = this.allObjects) {
             let object;
@@ -483,8 +487,8 @@ export default {
             this.render();
         },
         render() {
-            this.controls.update();
-
+            // this.controls.update();
+            
             this.renderer.render(this.scene, this.camera);
         }
     }

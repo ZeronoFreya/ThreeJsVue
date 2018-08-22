@@ -21,19 +21,6 @@ export default {
     computed: {
         ctrlType() {
             return this.$store.state.control;
-        },
-        hasListener() {
-            // 判断是否有鼠标事件监听，用于减少不必要的拾取判断
-            const events = this._events;
-            const result = {};
-
-            ["on-mousemove", "on-mouseup", "on-mousedown", "on-click"].forEach(
-                name => {
-                    result[name] = !!events[name] && events[name].length > 0;
-                }
-            );
-
-            return result;
         }
     },
     watch: {
@@ -64,64 +51,94 @@ export default {
         updateCtrlType() {
             this.controls.switchControls(this.ctrlType);
         },
+        contextmenu(event) {
+            event.preventDefault();
+        },
         onMouseDown(event) {
-            if (!this.hasListener["on-mousedown"]) return;
+            event.preventDefault();
+            event.stopPropagation();
 
-            const intersected = this.pick(event.clientX, event.clientY);
-            this.$emit("on-mousedown", intersected);
+            this.controls.mousedown(event);
+
+            this.$el.addEventListener("mousemove", this.onMouseMove, false);
+            this.$el.addEventListener("mouseup", this.onMouseUp, false);
+
+            this.$el.setCapture();
         },
         onMouseMove(event) {
-            if (!this.hasListener["on-mousemove"]) return;
+            event.preventDefault();
+            event.stopPropagation();
 
-            const intersected = this.pick(event.clientX, event.clientY);
-            this.$emit("on-mousemove", intersected);
+            this.controls.mousemove(event);
+            const camera = this.controls.getCamera();
+            return this.updateViewPoint(camera);
         },
         onMouseUp(event) {
-            if (!this.hasListener["on-mouseup"]) return;
+            event.preventDefault();
+            event.stopPropagation();
 
-            const intersected = this.pick(event.clientX, event.clientY);
-            this.$emit("on-mouseup", intersected);
+            this.controls.mouseup(event);
+
+            this.$el.removeEventListener("mousemove", this.onMouseMove, false);
+            this.$el.removeEventListener("mouseup", this.onMouseUp, false);
+
+            this.$el.releaseCapture();
+
         },
-        onClick(event) {
-            if (!this.hasListener["on-click"]) return;
-
-            const intersected = this.pick(event.clientX, event.clientY);
-            this.$emit("on-click", intersected);
+        mousewheel(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.controls.mousewheel(event);
+            const camera = this.controls.getCamera();
+            return this.updateViewPoint(camera)
         },
-        pick(x, y) {
-            if (!this.object) return;
+        touchstart(event) {
+            event.preventDefault();
+            event.stopPropagation();
 
-            const rect = this.$el.getBoundingClientRect();
+            this.controls.touchstart(event);
+            
+        },
+        touchmove(event) {
+            event.preventDefault();
+            event.stopPropagation();
 
-            x -= rect.left;
-            y -= rect.top;
-
-            this.mouse.x = x / this.size.width * 2 - 1;
-            this.mouse.y = -(y / this.size.height) * 2 + 1;
-
-            this.raycaster.setFromCamera(this.mouse, this.camera);
-
-            const intersects = this.raycaster.intersectObject(
-                this.object,
-                true
-            );
-
-            return (intersects && intersects.length) > 0 ? intersects[0] : null;
+            this.controls.touchmove(event);
+            const camera = this.controls.getCamera();
+            return this.updateViewPoint(camera);
+        },
+        touchend(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.controls.touchend(event);
+            
         }
     },
     mounted() {
-        // this.$el.addEventListener("contextmenu", this.contextmenu, false);
-        // this.$el.addEventListener("mousedown", this.onMouseDown, false);
-        // this.$el.addEventListener("mousemove", this.onMouseMove, false);
-        // this.$el.addEventListener("mouseup", this.onMouseUp, false);
-        // this.$el.addEventListener("click", this.onClick, false);
+        this.updateControls();
+
+        this.$el.addEventListener("contextmenu", this.contextmenu, false);
+        
+        this.$el.addEventListener("mousedown", this.onMouseDown, false);
+        
+        this.$el.addEventListener("wheel", this.mousewheel, false);
+
+        this.$el.addEventListener("touchstart", this.touchstart, false);
+        this.$el.addEventListener("touchend", this.touchend, false);
+        this.$el.addEventListener("touchmove", this.touchmove, false);
     },
     beforeDestroy() {
-        // this.$el.removeEventListener("contextmenu", this.contextmenu, false);
-        // this.$el.removeEventListener("mousedown", this.onMouseDown, false);
-        // this.$el.removeEventListener("mousemove", this.onMouseMove, false);
-        // this.$el.removeEventListener("mouseup", this.onMouseUp, false);
-        // this.$el.removeEventListener("click", this.onClick, false);
+        this.$el.removeEventListener("contextmenu", this.contextmenu, false);
+        
+        this.$el.removeEventListener("mousedown", this.onMouseDown, false);
+        this.$el.removeEventListener("mousemove", this.onMouseMove, false);
+        this.$el.removeEventListener("mouseup", this.onMouseUp, false);
+        
+        this.$el.removeEventListener("wheel", this.mousewheel, false);
+        
+        this.$el.removeEventListener("touchstart", this.touchstart, false);
+        this.$el.removeEventListener("touchend", this.touchend, false);
+        this.$el.removeEventListener("touchmove", this.touchmove, false);
     }
 };
 </script>

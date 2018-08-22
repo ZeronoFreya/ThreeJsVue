@@ -55,23 +55,23 @@ export default {
     methods:{
         toFront(){
             // EventHub.$emit('tofront',null);
-            this.setViewPoint('front');
+            this.lookThreeView('front');
             this.$emit('closeMenu');
         },
         toRight(){
-            this.setViewPoint('right');
+            this.lookThreeView('right');
             this.$emit('closeMenu');
         },
         toTop(){
-            this.setViewPoint('top');
+            this.lookThreeView('top');
             this.$emit('closeMenu');
         },
         toBack(){
-            this.setViewPoint('back');
+            this.lookThreeView('back');
             this.$emit('closeMenu');
         },
         ...mapMutations([
-            'setViewPoint'
+            'lookThreeView'
         ])
     }
 }
