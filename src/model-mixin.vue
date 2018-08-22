@@ -461,6 +461,7 @@ export default {
                     }
                 });
             }
+            this.render();
         },
         setObjs() {
             let objs = [];
