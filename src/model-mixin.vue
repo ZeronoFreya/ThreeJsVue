@@ -97,9 +97,6 @@ export default {
                 return new Vector3(0, 0, 0);
             }
         },
-        cameraRotation: {
-            type: Object
-        },
         cameraUp: {
             type: Object,
             default() {
@@ -126,7 +123,9 @@ export default {
             suportWebGL,
             scene: new Scene(),
             renderer: null,
-            size: {
+            rect: {
+                top: this.offsetTop,
+                left: this.offsetLeft,
                 width: this.width,
                 height: this.height
             },
@@ -158,13 +157,15 @@ export default {
     },
     computed: {},
     mounted() {
-        if (this.width === undefined || this.height === undefined) {
-            this.size = {
-                width: this.$el.offsetWidth,
-                height: this.$el.offsetHeight
-            };
-        }
-        this.aspectRatio = this.size.width / this.size.height;
+        // if (this.width === undefined || this.height === undefined) {
+        //     this.rect = {
+        //         width: this.$el.offsetWidth,
+        //         height: this.$el.offsetHeight
+        //     };
+        // }
+        // this.aspectRatio = this.rect.width / this.rect.height;
+
+        
 
         this.renderer = new WebGLRenderer({
             antialias: true,
@@ -175,10 +176,13 @@ export default {
 
         this.scene.add(this.wrapper);
 
+        this.setRect();
+
         this.load();
 
-        
-        this.update();
+        this.updateRenderer();
+        this.updateCamera();
+        this.updateLights(this.lights);
 
         window.addEventListener("resize", this.onResize, false);
 
@@ -219,6 +223,7 @@ export default {
             handler(val) {
                 this.updateCamera();
                 this.updateRenderer();
+                this.render();
             }
         },
         backgroundAlpha() {
@@ -229,24 +234,31 @@ export default {
         }
     },
     methods: {
-        onResize() {
-            if (
-                this.$el.offsetWidth !== this.size.width ||
-                this.$el.offsetHeight !== this.size.height
-            ) {
-                this.$nextTick(() => {
-                    this.size = {
-                        width: this.$el.offsetWidth,
-                        height: this.$el.offsetHeight
-                    };
-                    this.aspectRatio = this.size.width / this.size.height;
-                });
-            }
-        },
-        update() {
+        setRect() {
+            const box = this.$el.getBoundingClientRect();
+            // adjustments come from similar code in the jquery offset() function
+            const d = this.$el.ownerDocument.documentElement;
+
+            this.rect = {
+                left: box.left + window.pageXOffset - d.clientLeft,
+                top: box.top + window.pageYOffset - d.clientTop,
+                width: this.$el.offsetWidth,
+                height: this.$el.offsetHeight
+            };
+            this.aspectRatio = this.rect.width / this.rect.height;
             this.updateRenderer();
             this.updateCamera();
-            this.updateLights(this.lights);
+            this.render();
+        },
+        onResize() {
+            if (
+                this.$el.offsetWidth !== this.rect.width ||
+                this.$el.offsetHeight !== this.rect.height
+            ) {
+                this.$nextTick(() => {
+                    this.setRect();
+                });
+            }
         },
         updateModel() {
             const object = this.object;
@@ -264,15 +276,15 @@ export default {
         updateRenderer() {
             const renderer = this.renderer;
 
-            renderer.setSize(this.size.width, this.size.height);
+            renderer.setSize(this.rect.width, this.rect.height);
             renderer.setPixelRatio(window.devicePixelRatio || 1);
             renderer.setClearColor(new Color(this.backgroundColor).getHex());
             renderer.setClearAlpha(this.backgroundAlpha);
         },
         updateCamera() {
             // if (this.isLoaded) {
-                this.camera.aspect = this.aspectRatio;
-                this.camera.updateProjectionMatrix();
+            this.camera.aspect = this.aspectRatio;
+            this.camera.updateProjectionMatrix();
             // }
         },
         updateLights(_light) {
@@ -395,12 +407,10 @@ export default {
             // this.updateCamera();
             const dis = this.distance(this.wrapper);
             let y = -center.y;
-            let x = Math.sqrt(
-                (Math.pow(dis, 2)-Math.pow(y, 2))/2
-            );
+            let x = Math.sqrt((Math.pow(dis, 2) - Math.pow(y, 2)) / 2);
             let camera = {
                 lookat: new Vector3(),
-                pos: new Vector3(x,y,x),
+                pos: new Vector3(x, y, x),
                 up: new Vector3(0, 1, 0)
             };
             this.updateViewPoint(camera);
@@ -444,7 +454,7 @@ export default {
 
             this.loadEnd();
         },
-        updateViewPoint(camera){
+        updateViewPoint(camera) {
             this.camera.position.copy(camera.pos);
             this.camera.up.copy(camera.up);
             this.camera.lookAt(camera.lookat);
@@ -489,7 +499,7 @@ export default {
         },
         render() {
             // this.controls.update();
-            
+
             this.renderer.render(this.scene, this.camera);
         }
     }

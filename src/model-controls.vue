@@ -38,7 +38,7 @@ export default {
             if (this.controllable) {
                 if (this.controls) return;
 
-                this.controls = new TrackballControls(this.camera, this.$el);
+                this.controls = new TrackballControls(this.camera, this.rect);
 
                 this.updateCtrlType();
             } else {
@@ -68,7 +68,6 @@ export default {
         onMouseMove(event) {
             event.preventDefault();
             event.stopPropagation();
-
             this.controls.mousemove(event);
             const camera = this.controls.getCamera();
             return this.updateViewPoint(camera);

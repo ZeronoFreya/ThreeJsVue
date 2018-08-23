@@ -7,7 +7,7 @@ import * as THREE from "three";
  * @author Luca Antiga 	/ http://lantiga.github.io
  */
 
-const TrackballControls = function(object, domElement) {
+const TrackballControls = function(object, rect) {
     var _this = this;
     var STATE = {
         NONE: -1,
@@ -19,13 +19,11 @@ const TrackballControls = function(object, domElement) {
     };
 
     this.object = object;
-    this.domElement = domElement !== undefined ? domElement : document;
-
     // API
 
     this.enabled = true;
 
-    this.screen = { left: 0, top: 0, width: 0, height: 0 };
+    this.screen = rect;
 
     this.rotateSpeed = 1.0;
     this.zoomSpeed = 1.2;
@@ -49,7 +47,7 @@ const TrackballControls = function(object, domElement) {
 
     var EPS = 0.000001;
 
-    var lastPosition = new THREE.Vector3();
+    // var lastPosition = new THREE.Vector3();
 
     var _state = STATE.NONE,
         _prevState = STATE.NONE,
@@ -73,36 +71,6 @@ const TrackballControls = function(object, domElement) {
     this.position0 = this.object.position.clone();
     this.up0 = this.object.up.clone();
 
-    // events
-
-    var changeEvent = { type: "change" };
-    var startEvent = { type: "start" };
-    var endEvent = { type: "end" };
-
-    // methods
-
-    this.handleResize = function() {
-        if (this.domElement === document) {
-            this.screen.left = 0;
-            this.screen.top = 0;
-            this.screen.width = window.innerWidth;
-            this.screen.height = window.innerHeight;
-        } else {
-            var box = this.domElement.getBoundingClientRect();
-            // adjustments come from similar code in the jquery offset() function
-            var d = this.domElement.ownerDocument.documentElement;
-            this.screen.left = box.left + window.pageXOffset - d.clientLeft;
-            this.screen.top = box.top + window.pageYOffset - d.clientTop;
-            this.screen.width = box.width;
-            this.screen.height = box.height;
-        }
-    };
-
-    this.handleEvent = function(event) {
-        if (typeof this[event.type] == "function") {
-            this[event.type](event);
-        }
-    };
 
     var getMouseOnScreen = (function() {
         var vector = new THREE.Vector2();
@@ -134,7 +102,7 @@ const TrackballControls = function(object, domElement) {
 
     this.rotateOrbit = (function() {
         var quat = new THREE.Quaternion().setFromUnitVectors(
-                _this.object.up,
+                new THREE.Vector3(0, 1, 0),
                 new THREE.Vector3(0, 1, 0)
             ),
             quatInverse = quat.clone().inverse(),
@@ -146,7 +114,7 @@ const TrackballControls = function(object, domElement) {
             minPolarAngle = 0,
             maxPolarAngle = Math.PI,
             spherical = new THREE.Spherical();
-
+            
         return function rotateOrbit() {
             rotateDelta.set(
                 _moveCurr.x - _movePrev.x,
@@ -361,57 +329,6 @@ const TrackballControls = function(object, domElement) {
         // }
         return { lookat: _this.target, pos: _pos, up: _up };
     };
-    this.updateXX = function() {
-		
-        _eye.subVectors(_this.object.position, _this.target);
-
-        if (!_this.noRotate) {
-            _this.rotateCamera();
-            // if (_this.rotateY) {
-            // 	// _this.rotateWithY(quaternion);
-            // 	_this.rotateOrbit();
-            // } else {
-            // 	_this.rotateTrackball();
-            // }
-        }
-
-        if (!_this.noZoom) {
-            _this.zoomCamera();
-        }
-
-        if (!_this.noPan) {
-            _this.panCamera();
-        }
-        _this.object.position.addVectors(_this.target, _eye);
-
-        _this.checkDistances();
-
-        _this.object.lookAt(_this.target);
-
-        if (lastPosition.distanceToSquared(_this.object.position) > EPS) {
-            _this.dispatchEvent(changeEvent);
-
-            lastPosition.copy(_this.object.position);
-        }
-    };
-
-    // this.reset = function() {
-    //     _state = STATE.NONE;
-    //     _prevState = STATE.NONE;
-
-    //     _this.target.copy(_this.target0);
-    //     _this.object.position.copy(_this.position0);
-    //     _this.object.up.copy(_this.up0);
-
-    //     _eye.subVectors(_this.object.position, _this.target);
-
-    //     _this.object.lookAt(_this.target);
-
-    //     _this.dispatchEvent(changeEvent);
-
-	// 	lastPosition.copy(_this.object.position);
-	// 	_this.update();
-    // };
 
     this.switchControls = function(c) {
         switch (c) {
@@ -551,7 +468,7 @@ const TrackballControls = function(object, domElement) {
     };
 
 
-    this.handleResize();
+    // this.handleResize();
 
     // force an update at start
     // this.update();
