@@ -179,10 +179,7 @@ export default {
         this.scene.add(this.wrapper);
 
 
-        var polarGridHelper = new PolarGridHelper( 100, 3, 2, 3, 0xffffff, 0xffffff );
-        polarGridHelper.position.y = 0;
-        polarGridHelper.position.x = 0;
-        this.scene.add( polarGridHelper );
+        
         
 
         this.setRect();
@@ -410,19 +407,27 @@ export default {
         allLoaded() {
             this.isLoaded = true;
             const center = getCenter(this.wrapper);
+            const y = center.y;
             // correction position
             this.wrapper.position.copy(center.negate());
             this.scene.add( new BoxHelper( this.wrapper ) );
 
             // this.updateCamera();
             const dis = this.distance(this.wrapper);
-            let y = -center.y;
-            let x = Math.sqrt((Math.pow(dis, 2) - Math.pow(y, 2)) / 2);
-            let camera = {
+            // let y = -center.y;
+            const x = Math.sqrt((Math.pow(dis, 2) - Math.pow(y, 2)) / 2);
+            const camera = {
                 lookat: new Vector3(),
                 pos: new Vector3(x, y, x),
                 up: new Vector3(0, 1, 0)
             };
+
+            const polarGridHelper = new PolarGridHelper( dis, 3, 2, 64, 0xffffff, 0xffffff );
+            polarGridHelper.position.y = 0;
+            polarGridHelper.position.x = 0;
+            this.scene.add( polarGridHelper );
+
+
             this.updateViewPoint(camera);
             // this.toFront()
             // this.updateModel()
