@@ -15,6 +15,8 @@ import {
     Vector3,
     Color,
     Scene,
+    BoxHelper,
+    PolarGridHelper,
     Raycaster,
     WebGLRenderer,
     PerspectiveCamera,
@@ -175,6 +177,13 @@ export default {
         this.renderer.shadowMap.enabled = true;
 
         this.scene.add(this.wrapper);
+
+
+        var polarGridHelper = new PolarGridHelper( 100, 3, 2, 3, 0xffffff, 0xffffff );
+        polarGridHelper.position.y = 0;
+        polarGridHelper.position.x = 0;
+        this.scene.add( polarGridHelper );
+        
 
         this.setRect();
 
@@ -403,6 +412,7 @@ export default {
             const center = getCenter(this.wrapper);
             // correction position
             this.wrapper.position.copy(center.negate());
+            this.scene.add( new BoxHelper( this.wrapper ) );
 
             // this.updateCamera();
             const dis = this.distance(this.wrapper);
