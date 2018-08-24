@@ -154,7 +154,8 @@ export default {
             // 灯光
             allLights: [],
             // clock: typeof performance === "undefined" ? Date : performance,
-            reqId: null // requestAnimationFrame id
+            reqId: null, // requestAnimationFrame id
+            isAnimate: false
         };
     },
     computed: {},
@@ -229,7 +230,7 @@ export default {
             handler(val) {
                 this.updateCamera();
                 this.updateRenderer();
-                this.render();
+                // this.render();
             }
         },
         backgroundAlpha() {
@@ -254,7 +255,7 @@ export default {
             this.aspectRatio = this.rect.width / this.rect.height;
             this.updateRenderer();
             this.updateCamera();
-            this.render();
+            // this.render();
         },
         onResize() {
             if (
@@ -361,6 +362,7 @@ export default {
                 this.allLights.push(light);
                 this.scene.add(light);
             });
+            this.render();
         },
         load() {
             if (this.src.length == 0) return;
@@ -407,14 +409,16 @@ export default {
         allLoaded() {
             this.isLoaded = true;
             const center = getCenter(this.wrapper);
-            const y = center.y;
+            
             // correction position
             this.wrapper.position.copy(center.negate());
             this.scene.add( new BoxHelper( this.wrapper ) );
 
             // this.updateCamera();
             const dis = this.distance(this.wrapper);
+
             // let y = -center.y;
+            const y = this.targetObjs.size.y/2;
             const x = Math.sqrt((Math.pow(dis, 2) - Math.pow(y, 2)) / 2);
             const camera = {
                 lookat: new Vector3(),
@@ -436,8 +440,8 @@ export default {
 
             this.$emit("on-load");
 
-            // this.animate();
             this.render();
+            this.animate();
         },
         getObject(object) {
             return object;
@@ -448,12 +452,16 @@ export default {
                 return this.targetObjs.distance;
             }
             const size = getSize(target);
-
-            let len =
-                this.aspectRatio < size.x / size.y ? size.x / 2 : size.y / 2;
+            
+            const maxSize = Math.max(size.x,size.y,size.z);
+            
+            // let len =
+            //     this.aspectRatio < size.x / size.y ? size.x / 2 : size.y / 2;
+            let len = maxSize/2;
 
             let dis =
-                len / Math.tan(this.vertFOV / 2 * Math.PI / 180) + size.z / 2;
+                len / Math.tan(this.vertFOV / 2 * Math.PI / 180);
+            dis *= 1.2;
 
             this.targetObjs.objs = target;
             this.targetObjs.size = size;
@@ -473,7 +481,7 @@ export default {
             this.camera.position.copy(camera.pos);
             this.camera.up.copy(camera.up);
             this.camera.lookAt(camera.lookat);
-            this.render();
+            // this.render();
         },
         setMaterial(mtl, objects = this.allObjects) {
             let object;
@@ -510,7 +518,9 @@ export default {
         buildOver() {},
         animate() {
             this.reqId = requestAnimationFrame(this.animate);
-            this.render();
+            if (this.isAnimate) {
+                this.render();
+            }
         },
         render() {
             // this.controls.update();

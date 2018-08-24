@@ -33,11 +33,13 @@ export default {
         EventHub.$on("setmaterial", (mtl, lights = null) => {
             this.setMaterial(mtl);
             this.updateLights(lights);
-            EventHub.$emit("loading");
+            // EventHub.$emit("loading");
+            this.$store.commit('toggleLoading');
+            
         });
-        EventHub.$on("setapparenthorizon", hl => {
-            this.setApparentHorizon(hl);
-        });
+        // EventHub.$on("setapparenthorizon", hl => {
+        //     this.setApparentHorizon(hl);
+        // });
     },
     data() {
         return {

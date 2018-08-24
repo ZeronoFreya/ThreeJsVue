@@ -78,7 +78,6 @@ export default {
             };
         },
         threeView(target = this.wrapper) {
-            console.log(this.facedPlane);
             let facedPlane = this.funMap.get(this.facedPlane);
             if (facedPlane === undefined) {
                 return;
@@ -86,9 +85,8 @@ export default {
             let distance = this.distance(target);
             let camera = facedPlane(distance);
             this.updateViewPoint(camera);
-            this.$store.commit('lookThreeView');
-            console.log(this.facedPlane);
-                     
+            this.render();
+            this.$store.commit('setFacedPlane');
         },
         resetViewPoint() {
             this.camera.position.set(

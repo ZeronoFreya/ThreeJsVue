@@ -9,24 +9,21 @@
 <script>
 import ViewLayer from './components/view-layer';
 import FloatMenu from './components/float-menu';
-import EventHub from '../src/eventHub';
 
 export default {
     data() {
-        return {
-            loading: true
+        return {}
+    },
+    computed: {
+        loading() {
+            return this.$store.state.loading;
         }
     },
-    beforeCreate() {
-        EventHub.controltype = 'orbit';
-        EventHub.$on('loading', () => {
-            this.loading = !this.loading;
-        });
-    },
+    beforeCreate() {},
     created() {},
     methods: {
         onLoad() {
-            this.loading = false;
+            this.$store.commit('toggleLoading');
         }
     },
     components: {

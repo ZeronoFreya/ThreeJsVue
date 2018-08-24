@@ -54,4 +54,5 @@ export function advToon() {
     
 
     EventHub.$emit('setmaterial', mtl.build());
+    // this.$store.commit("setMaterial", mtl.build());
 }

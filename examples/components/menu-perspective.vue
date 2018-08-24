@@ -55,23 +55,23 @@ export default {
     methods:{
         toFront(){
             // EventHub.$emit('tofront',null);
-            this.lookThreeView('front');
+            this.setFacedPlane('front');
             this.$emit('closeMenu');
         },
         toRight(){
-            this.lookThreeView('right');
+            this.setFacedPlane('right');
             this.$emit('closeMenu');
         },
         toTop(){
-            this.lookThreeView('top');
+            this.setFacedPlane('top');
             this.$emit('closeMenu');
         },
         toBack(){
-            this.lookThreeView('back');
+            this.setFacedPlane('back');
             this.$emit('closeMenu');
         },
         ...mapMutations([
-            'lookThreeView'
+            'setFacedPlane'
         ])
     }
 }

@@ -101,10 +101,8 @@ const TrackballControls = function(object, rect) {
     })();
 
     this.rotateOrbit = (function() {
-        var quat = new THREE.Quaternion().setFromUnitVectors(
-                new THREE.Vector3(0, 1, 0),
-                new THREE.Vector3(0, 1, 0)
-            ),
+        let up = new THREE.Vector3(0, 1, 0),
+            quat = new THREE.Quaternion().setFromUnitVectors(up, up),
             quatInverse = quat.clone().inverse(),
             rotateDelta = new THREE.Vector2(),
             minAzimuthAngle = -Infinity,
@@ -124,6 +122,7 @@ const TrackballControls = function(object, rect) {
             if (rotateDelta.length()) {
                 rotateDelta.multiplyScalar(_this.rotateSpeed);
                 _eye.copy(_this.object.position).sub(_this.target);
+                _up.copy(up);
 
                 // rotate offset to "y-axis-is-up" space
                 _eye.applyQuaternion(quat);
@@ -185,10 +184,10 @@ const TrackballControls = function(object, rect) {
 
             if (angle) {
                 _eye.copy(_this.object.position).sub(_this.target);
-
+                _up.copy(_this.object.up);
                 eyeDirection.copy(_eye).normalize();
 
-                objectUpDirection.copy(_this.object.up).normalize();
+                objectUpDirection.copy(_up).normalize();
 
                 objectSidewaysDirection
                     .crossVectors(objectUpDirection, eyeDirection)
@@ -215,6 +214,7 @@ const TrackballControls = function(object, rect) {
             } else if (!_this.staticMoving && _lastAngle > 0.0001) {
                 _lastAngle *= Math.sqrt(1.0 - _this.dynamicDampingFactor);
                 _eye.copy(_this.object.position).sub(_this.target);
+                _up.copy(_this.object.up);
                 quaternion.setFromAxisAngle(_lastAxis, _lastAngle);
                 _eye.applyQuaternion(quaternion);
                 _up.applyQuaternion(quaternion);

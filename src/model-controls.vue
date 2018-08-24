@@ -50,6 +50,7 @@ export default {
         },
         updateCtrlType() {
             this.controls.switchControls(this.ctrlType);
+            this.render();
         },
         contextmenu(event) {
             event.preventDefault();
@@ -57,6 +58,8 @@ export default {
         onMouseDown(event) {
             event.preventDefault();
             event.stopPropagation();
+
+            this.isAnimate = true;
 
             this.controls.mousedown(event);
 
@@ -76,6 +79,8 @@ export default {
             event.preventDefault();
             event.stopPropagation();
 
+            this.isAnimate = false;
+
             this.controls.mouseup(event);
 
             this.$el.removeEventListener("mousemove", this.onMouseMove, false);
@@ -89,11 +94,14 @@ export default {
             event.stopPropagation();
             this.controls.mousewheel(event);
             const camera = this.controls.getCamera();
-            return this.updateViewPoint(camera)
+            this.updateViewPoint(camera);
+            this.render();
         },
         touchstart(event) {
             event.preventDefault();
             event.stopPropagation();
+
+            this.isAnimate = true;
 
             this.controls.touchstart(event);
             
@@ -109,6 +117,8 @@ export default {
         touchend(event) {
             event.preventDefault();
             event.stopPropagation();
+
+            this.isAnimate = false;
             this.controls.touchend(event);
             
         }

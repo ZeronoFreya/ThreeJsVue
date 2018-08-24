@@ -9,52 +9,53 @@
 import { wire } from "../static/material/wire.js";
 import { advToon } from "../static/material/adv-toon.js";
 import { envmapsHdr } from "../static/material/envmaps-hdr.js";
-import EventHub from "../../src/eventHub";
+import { mapMutations } from "vuex";
 
 export default {
-  data() {
-    return {
-      mtls: [
-        {
-          text: "wire",
-          action: wire
+    data() {
+        return {
+            mtls: [
+                {
+                    text: "wire",
+                    action: wire
+                },
+                {
+                    text: "advToon",
+                    action: advToon
+                },
+                {
+                    text: "envmapsHdr",
+                    action: envmapsHdr
+                }
+            ]
+        };
+    },
+    created() {},
+    methods: {
+        switchMtl(setMaterial) {
+            this.toggleLoading();
+            setMaterial();
+            this.$emit("closeMenu");
         },
-        {
-          text: "advToon",
-          action: advToon
-        },
-        {
-          text: "envmapsHdr",
-          action: envmapsHdr
-        }
-      ]
-    };
-  },
-  created() {},
-  methods: {
-    switchMtl(setMaterial) {
-      EventHub.$emit("loading");
-      setMaterial();
-      this.$emit("closeMenu");
+        ...mapMutations(["toggleLoading"])
     }
-  }
 };
 </script>
 <style lang="scss" scoped>
 .contain {
-  background: rgba(0, 0, 0, 0.6);
-  padding: 10px 0;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 .item {
-  height: 60px;
-  line-height: 60px;
-  color: white;
-  font-size: 20px;
-  white-space: nowrap;
-  overflow: hidden;
+    height: 60px;
+    line-height: 60px;
+    color: white;
+    font-size: 20px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 </style>
 

@@ -5,6 +5,7 @@ import { Vector3 } from "three";
 Vue.use(Vuex);
 
 const state = {
+    loading: true,
     control: "orbit",
     facedPlane: "",
     rateApparentHorizon: 0.0, // 视平线的比率（-100% ~ 100%）
@@ -16,6 +17,9 @@ const state = {
 };
 
 const mutations = {
+    toggleLoading: state => {
+        state.loading = !state.loading;
+    },
     switchCtrl: (state, c = null) => {
         if (!c) {
             c = state.control == "orbit" ? "trackball" : "orbit";
@@ -24,12 +28,13 @@ const mutations = {
         }
         state.control = c;
     },
-    lookThreeView: (state, v = "") => {
+    setFacedPlane: (state, v = "") => {
         // if (~["front", "right", "top", "back"].indexOf(v)) {
         //     state.facedPlane = v;
         // }
         state.facedPlane = v;
     },
+    setMaterial: (state, mtl) => {},
     setViewPoint: (state, camera) => {
         state.camera = camera;
     },
