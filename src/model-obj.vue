@@ -30,13 +30,13 @@ export default {
         }
     },
     created() {
-        EventHub.$on("setmaterial", (mtl, lights = null) => {
-            this.setMaterial(mtl);
-            this.updateLights(lights);
-            // EventHub.$emit("loading");
-            this.$store.commit('toggleLoading');
+        // EventHub.$on("setmaterial", (mtl, lights = null) => {
+        //     this.setMaterial(mtl);
+        //     this.updateLights(lights);
+        //     // EventHub.$emit("loading");
+        //     this.$store.commit('toggleLoading');
             
-        });
+        // });
         // EventHub.$on("setapparenthorizon", hl => {
         //     this.setApparentHorizon(hl);
         // });
@@ -48,9 +48,26 @@ export default {
             mtlLoader: new MTLLoader()
         };
     },
+    computed: {
+        material() {
+            return this.$store.state.material;
+        },
+        rendererOpt() {
+            return this.$store.state.rendererOpt;
+        },
+    },
     watch: {
         mtl() {
             this.load();
+        },
+        material(){
+            this.setMaterial(this.material);
+            // this.updateLights(null);
+            // this.$store.commit('toggleLoading');
+        },
+        rendererOpt(){
+            this.updateRendererOpt();
+            // this.render();
         }
     },
     methods: {
@@ -62,6 +79,13 @@ export default {
                         child.geometry.computeVertexNormals();
                     }
                 });
+            }
+        },
+        updateRendererOpt(){
+            for (const key in this.rendererOpt) {
+                if (this.rendererOpt.hasOwnProperty(key)) {
+                    this.renderer[key] = this.rendererOpt[key];
+                }
             }
         },
         buildOver() {

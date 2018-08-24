@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { Vector3 } from "three";
+import {
+    Vector3
+} from "three";
 
 Vue.use(Vuex);
 
@@ -13,6 +15,12 @@ const state = {
         lookat: new Vector3(),
         pos: new Vector3(),
         up: new Vector3(0, 1, 0)
+    },
+    material: null,
+    rendererOpt: {
+        gammaInput: false,
+        gammaOutput: false,
+        toneMappingExposure: 1
     }
 };
 
@@ -34,7 +42,12 @@ const mutations = {
         // }
         state.facedPlane = v;
     },
-    setMaterial: (state, mtl) => {},
+    setMaterial: (state, mtl) => {
+        state.material = mtl;
+    },
+    setRenderer: (state, opt) => {
+        state.rendererOpt = opt;
+    },
     setViewPoint: (state, camera) => {
         state.camera = camera;
     },

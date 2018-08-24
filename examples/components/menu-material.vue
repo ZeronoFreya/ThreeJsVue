@@ -32,12 +32,14 @@ export default {
     },
     created() {},
     methods: {
-        switchMtl(setMaterial) {
-            this.toggleLoading();
-            setMaterial();
+        switchMtl(action) {
+            // this.toggleLoading();
+            let { material, rendererOpt } = { ...action() };
+            this.setMaterial(material);
+            this.setRenderer(rendererOpt);
             this.$emit("closeMenu");
         },
-        ...mapMutations(["toggleLoading"])
+        ...mapMutations(["toggleLoading", "setMaterial","setRenderer"])
     }
 };
 </script>

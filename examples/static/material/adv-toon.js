@@ -1,19 +1,48 @@
-import { FloatNode } from "../../../src/nodes/inputs/FloatNode";
-import { LightNode } from "../../../src/nodes/accessors/LightNode";
-import { ColorNode } from "../../../src/nodes/inputs/ColorNode";
-import { LuminanceNode } from "../../../src/nodes/utils/LuminanceNode";
-import { OperatorNode } from "../../../src/nodes/math/OperatorNode";
-import { Math1Node } from "../../../src/nodes/math/Math1Node";
-import { Math2Node } from "../../../src/nodes/math/Math2Node";
-import { Math3Node } from "../../../src/nodes/math/Math3Node";
-import { PositionNode } from "../../../src/nodes/accessors/PositionNode";
-import { NormalNode } from "../../../src/nodes/accessors/NormalNode";
-import { PhongNodeMaterial } from "../../../src/nodes/materials/PhongNodeMaterial";
-import EventHub from '../../../src/eventHub';
+import {
+    FloatNode
+} from "../../../src/nodes/inputs/FloatNode";
+import {
+    LightNode
+} from "../../../src/nodes/accessors/LightNode";
+import {
+    ColorNode
+} from "../../../src/nodes/inputs/ColorNode";
+import {
+    LuminanceNode
+} from "../../../src/nodes/utils/LuminanceNode";
+import {
+    OperatorNode
+} from "../../../src/nodes/math/OperatorNode";
+import {
+    Math1Node
+} from "../../../src/nodes/math/Math1Node";
+import {
+    Math2Node
+} from "../../../src/nodes/math/Math2Node";
+import {
+    Math3Node
+} from "../../../src/nodes/math/Math3Node";
+import {
+    PositionNode
+} from "../../../src/nodes/accessors/PositionNode";
+import {
+    NormalNode
+} from "../../../src/nodes/accessors/NormalNode";
+import {
+    PhongNodeMaterial
+} from "../../../src/nodes/materials/PhongNodeMaterial";
+// import EventHub from '../../../src/eventHub';
 
+var material, rendererOpt;
 export function advToon() {
+    if (material && rendererOpt) {
+        return {
+            material: material,
+            rendererOpt: rendererOpt
+        };
+    }
     let count = new FloatNode(2.8);
-    
+
     // let count = new FloatNode(0.2);
     let sceneDirectLight = new LightNode();
     let color = new ColorNode(0xf8eaec);
@@ -46,13 +75,23 @@ export function advToon() {
 
     // mtl.envMap = null;
 
-    let renderer = EventHub.renderer;
-    renderer.gammaInput = true;
-    renderer.gammaOutput = true;
-    renderer.toneMappingExposure = 1.4;
+    // let renderer = EventHub.renderer;
+    // renderer.gammaInput = true;
+    // renderer.gammaOutput = true;
+    // renderer.toneMappingExposure = 1.4;
     // console.log(renderer.toneMappingExposure);
-    
 
-    EventHub.$emit('setmaterial', mtl.build());
+    material = mtl.build();
+    rendererOpt = {
+        gammaInput: true,
+        gammaOutput: true,
+        toneMappingExposure: 1.4
+    };
+
+    // EventHub.$emit('setmaterial', mtl.build());
     // this.$store.commit("setMaterial", mtl.build());
+    return {
+        material: material,
+        rendererOpt: rendererOpt
+    };
 }

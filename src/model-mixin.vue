@@ -255,7 +255,7 @@ export default {
             this.aspectRatio = this.rect.width / this.rect.height;
             this.updateRenderer();
             this.updateCamera();
-            // this.render();
+            this.render();
         },
         onResize() {
             if (
