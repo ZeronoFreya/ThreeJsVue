@@ -31,7 +31,6 @@ import {
 import {
     PhongNodeMaterial
 } from "../../../src/nodes/materials/PhongNodeMaterial";
-// import EventHub from '../../../src/eventHub';
 
 var material, rendererOpt;
 export function advToon() {
@@ -73,14 +72,6 @@ export function advToon() {
     mtl.environment = lineColor;
     mtl.environmentAlpha = innerContour;
 
-    // mtl.envMap = null;
-
-    // let renderer = EventHub.renderer;
-    // renderer.gammaInput = true;
-    // renderer.gammaOutput = true;
-    // renderer.toneMappingExposure = 1.4;
-    // console.log(renderer.toneMappingExposure);
-
     material = mtl.build();
     rendererOpt = {
         gammaInput: true,
@@ -88,8 +79,6 @@ export function advToon() {
         toneMappingExposure: 1.4
     };
 
-    // EventHub.$emit('setmaterial', mtl.build());
-    // this.$store.commit("setMaterial", mtl.build());
     return {
         material: material,
         rendererOpt: rendererOpt

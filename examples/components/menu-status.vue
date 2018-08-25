@@ -50,6 +50,8 @@ export default {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    flex-wrap: wrap;
+    height: auto;
 }
 .status-btn{
     // width: 100px;

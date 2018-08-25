@@ -1,16 +1,22 @@
 <script>
+import { Mesh } from "three";
 import { OBJLoader } from "./loaders/OBJLoader";
 import { MTLLoader } from "./loaders/MTLLoader";
 import { toIndexed } from "./util";
 import mixin from "./model-mixin.vue";
 import cameraPlugin from "./model-camera-plugin";
+import material from "./model-material";
 import controls from "./model-controls";
 
 import EventHub from "./eventHub";
 
+
+// import { advToon } from "../static/material/adv-toon.js";
+// import { envmapsHdr } from "../static/material/envmaps-hdr.js";
+
 export default {
     name: "model-obj",
-    mixins: [mixin, controls, cameraPlugin],
+    mixins: [mixin, controls, cameraPlugin, material],
     props: {
         src: {
             type: Object,
@@ -35,7 +41,6 @@ export default {
         //     this.updateLights(lights);
         //     // EventHub.$emit("loading");
         //     this.$store.commit('toggleLoading');
-            
         // });
         // EventHub.$on("setapparenthorizon", hl => {
         //     this.setApparentHorizon(hl);
@@ -49,25 +54,16 @@ export default {
         };
     },
     computed: {
-        material() {
-            return this.$store.state.material;
-        },
-        rendererOpt() {
-            return this.$store.state.rendererOpt;
-        },
+        rme() {
+            return this.$store.state.rme;
+        }
     },
     watch: {
         mtl() {
             this.load();
         },
-        material(){
-            this.setMaterial(this.material);
-            // this.updateLights(null);
-            // this.$store.commit('toggleLoading');
-        },
-        rendererOpt(){
-            this.updateRendererOpt();
-            // this.render();
+        rme() {
+            this.setRME();
         }
     },
     methods: {
@@ -81,10 +77,25 @@ export default {
                 });
             }
         },
-        updateRendererOpt(){
-            for (const key in this.rendererOpt) {
-                if (this.rendererOpt.hasOwnProperty(key)) {
-                    this.renderer[key] = this.rendererOpt[key];
+        setRME() {
+            // this.$store.commit("toggleLoading");
+            // const { material = null, rendererOpt = null, effect = null } = {
+            //     ...this.rme
+            // };
+            console.log(this.rme);
+            // if (rendererOpt) {
+            //     this.updateRendererOpt(rendererOpt);
+            // };
+            // if (material) {
+            //     this.setMaterial(material);
+            // };
+            // if (effect) {};
+            // this.$store.commit("toggleLoading", false);
+        },
+        updateRendererOpt(rendererOpt) {
+            for (const key in rendererOpt) {
+                if (rendererOpt.hasOwnProperty(key)) {
+                    this.renderer[key] = rendererOpt[key];
                 }
             }
         },
@@ -157,6 +168,19 @@ export default {
                     );
                 }
             }
+        },
+        setMaterial(mtl, objects = this.allObjects) {
+            let object;
+            for (let i = 0, il = objects.length; i < il; i++) {
+                object = objects[i];
+                object.traverse(function(child) {
+                    if (child instanceof Mesh) {
+                        if (child.material) child.material.dispose();
+                        child.material = mtl;
+                    }
+                });
+            }
+            this.render();
         }
     }
 };

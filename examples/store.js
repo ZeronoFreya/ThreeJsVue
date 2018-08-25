@@ -16,17 +16,13 @@ const state = {
         pos: new Vector3(),
         up: new Vector3(0, 1, 0)
     },
-    material: null,
-    rendererOpt: {
-        gammaInput: false,
-        gammaOutput: false,
-        toneMappingExposure: 1
-    }
+    rme: null // renderer & material & effect
 };
 
 const mutations = {
-    toggleLoading: state => {
-        state.loading = !state.loading;
+    toggleLoading: (state, status) => {
+        status = status === undefined ? !state.loading : status;
+        state.loading = status;
     },
     switchCtrl: (state, c = null) => {
         if (!c) {
@@ -42,11 +38,8 @@ const mutations = {
         // }
         state.facedPlane = v;
     },
-    setMaterial: (state, mtl) => {
-        state.material = mtl;
-    },
-    setRenderer: (state, opt) => {
-        state.rendererOpt = opt;
+    setRME: (state, mtl) => {
+        state.rme = mtl;
     },
     setViewPoint: (state, camera) => {
         state.camera = camera;

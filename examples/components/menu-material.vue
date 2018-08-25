@@ -6,10 +6,10 @@
     </div>
 </template>
 <script>
-import { wire } from "../static/material/wire.js";
-import { advToon } from "../static/material/adv-toon.js";
-import { envmapsHdr } from "../static/material/envmaps-hdr.js";
-import { mapMutations } from "vuex";
+// import { wire } from "../static/material/wire.js";
+// import { advToon } from "../static/material/adv-toon.js";
+// import { envmapsHdr } from "../static/material/envmaps-hdr.js";
+// import { mapMutations } from "vuex";
 
 export default {
     data() {
@@ -17,15 +17,15 @@ export default {
             mtls: [
                 {
                     text: "wire",
-                    action: wire
+                    action: "wire"
                 },
                 {
                     text: "advToon",
-                    action: advToon
+                    action: "advToon"
                 },
                 {
                     text: "envmapsHdr",
-                    action: envmapsHdr
+                    action: "envmapsHdr"
                 }
             ]
         };
@@ -34,12 +34,12 @@ export default {
     methods: {
         switchMtl(action) {
             // this.toggleLoading();
-            let { material, rendererOpt } = { ...action() };
-            this.setMaterial(material);
-            this.setRenderer(rendererOpt);
+            // let { material, rendererOpt } = { ...action() };
+            // this.setRME(action);
+            this.$store.commit('setRME', action);
             this.$emit("closeMenu");
         },
-        ...mapMutations(["toggleLoading", "setMaterial","setRenderer"])
+        // ...mapMutations(["toggleLoading", "setRME"])
     }
 };
 </script>

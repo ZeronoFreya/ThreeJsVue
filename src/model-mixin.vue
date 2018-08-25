@@ -15,16 +15,15 @@ import {
     Vector3,
     Color,
     Scene,
-    BoxHelper,
-    PolarGridHelper,
+    // BoxHelper,
+    // PolarGridHelper,
     Raycaster,
     WebGLRenderer,
     PerspectiveCamera,
     AmbientLight,
     PointLight,
     HemisphereLight,
-    DirectionalLight,
-    Mesh
+    DirectionalLight
 } from "three";
 import { getSize, getCenter } from "./util";
 // import { OrbitControls } from './controls/OrbitControls'
@@ -412,7 +411,7 @@ export default {
             
             // correction position
             this.wrapper.position.copy(center.negate());
-            this.scene.add( new BoxHelper( this.wrapper ) );
+            // this.scene.add( new BoxHelper( this.wrapper ) );
 
             // this.updateCamera();
             const dis = this.distance(this.wrapper);
@@ -426,10 +425,10 @@ export default {
                 up: new Vector3(0, 1, 0)
             };
 
-            const polarGridHelper = new PolarGridHelper( dis, 3, 2, 64, 0xffffff, 0xffffff );
-            polarGridHelper.position.y = 0;
-            polarGridHelper.position.x = 0;
-            this.scene.add( polarGridHelper );
+            // const polarGridHelper = new PolarGridHelper( dis, 3, 2, 64, 0xffffff, 0xffffff );
+            // polarGridHelper.position.y = 0;
+            // polarGridHelper.position.x = 0;
+            // this.scene.add( polarGridHelper );
 
 
             this.updateViewPoint(camera);
@@ -482,19 +481,6 @@ export default {
             this.camera.up.copy(camera.up);
             this.camera.lookAt(camera.lookat);
             // this.render();
-        },
-        setMaterial(mtl, objects = this.allObjects) {
-            let object;
-            for (let i = 0, il = objects.length; i < il; i++) {
-                object = objects[i];
-                object.traverse(function(child) {
-                    if (child instanceof Mesh) {
-                        if (child.material) child.material.dispose();
-                        child.material = mtl;
-                    }
-                });
-            }
-            this.render();
         },
         setObjs() {
             let objs = [];

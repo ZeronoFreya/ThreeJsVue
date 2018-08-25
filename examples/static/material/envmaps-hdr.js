@@ -21,6 +21,7 @@ function genCubeUrls(prefix, postfix) {
         prefix + 'pz' + postfix, prefix + 'nz' + postfix
     ];
 };
+var material, rendererOpt;
 export function envmapsHdr() {
     let hdrUrls = genCubeUrls('static/pisaHDR/', '.hdr');
     let hdrCubeRenderTarget;
@@ -76,6 +77,7 @@ export function envmapsHdr() {
             roughness: 0.54,
             envMap: hdrCubeRenderTarget.texture
         });
+        // return { material: mtl, rendererOpt: rendererOpt };
         EventHub.$emit('setmaterial', mtl, lights);
     });
 }
