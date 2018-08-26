@@ -1,33 +1,41 @@
 <script>
 import { Vector3 } from "three";
 import { wire } from "./material/wire";
+import { advToon } from "./material/adv-toon";
+import { envmapsHdr } from "./material/envmaps-hdr";
 
 export default {
     data() {
-        return {
-            funMap: new Map()
-        };
+        return {};
     },
     computed: {
-        rateApparentHorizon() {
-            return this.$store.state.rateApparentHorizon;
+        rme() {
+            return this.$store.state.rme;
         }
     },
     watch: {
-        rateApparentHorizon() {
-            this.setRateApparentHorizon();
+        rme() {
+            this.setRME();
         }
     },
     created: function() {
-        this.funMap.set("wire", this.front);
+        if (this.funMap === undefined) {
+            this.funMap = new Map();
+        }
+        this.funMap.set("wire", wire);
+        this.funMap.set("advToon", advToon);
+        this.funMap.set("envmapsHdr", envmapsHdr);
     },
     methods: {
-        front(distance) {
-            return {
-                lookat: new Vector3(0, this.apparentHorizon, 0),
-                pos: new Vector3(0, this.apparentHorizon, distance),
-                up: new Vector3(0, 1, 0)
-            };
+        setRME() {
+            this.$store.commit("toggleLoading", true);
+            this.funMap.get(this.rme)({
+                objects: this.allObjects,
+                renderer: this.renderer,
+                updateLights: this.updateLights
+            });
+            this.render();
+            this.$store.commit("toggleLoading", false);
         }
     }
 };

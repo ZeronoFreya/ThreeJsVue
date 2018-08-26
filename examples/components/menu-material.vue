@@ -33,13 +33,9 @@ export default {
     created() {},
     methods: {
         switchMtl(action) {
-            // this.toggleLoading();
-            // let { material, rendererOpt } = { ...action() };
-            // this.setRME(action);
-            this.$store.commit('setRME', action);
+            this.$store.commit("setRME", action);
             this.$emit("closeMenu");
-        },
-        // ...mapMutations(["toggleLoading", "setRME"])
+        }
     }
 };
 </script>

@@ -35,17 +35,7 @@ export default {
             type: String
         }
     },
-    created() {
-        // EventHub.$on("setmaterial", (mtl, lights = null) => {
-        //     this.setMaterial(mtl);
-        //     this.updateLights(lights);
-        //     // EventHub.$emit("loading");
-        //     this.$store.commit('toggleLoading');
-        // });
-        // EventHub.$on("setapparenthorizon", hl => {
-        //     this.setApparentHorizon(hl);
-        // });
-    },
+    created() {},
     data() {
         return {
             objs: this.setObjs(),
@@ -53,17 +43,10 @@ export default {
             mtlLoader: new MTLLoader()
         };
     },
-    computed: {
-        rme() {
-            return this.$store.state.rme;
-        }
-    },
+    computed: {},
     watch: {
         mtl() {
             this.load();
-        },
-        rme() {
-            this.setRME();
         }
     },
     methods: {
@@ -76,34 +59,6 @@ export default {
                     }
                 });
             }
-        },
-        setRME() {
-            // this.$store.commit("toggleLoading");
-            // const { material = null, rendererOpt = null, effect = null } = {
-            //     ...this.rme
-            // };
-            console.log(this.rme);
-            // if (rendererOpt) {
-            //     this.updateRendererOpt(rendererOpt);
-            // };
-            // if (material) {
-            //     this.setMaterial(material);
-            // };
-            // if (effect) {};
-            // this.$store.commit("toggleLoading", false);
-        },
-        updateRendererOpt(rendererOpt) {
-            for (const key in rendererOpt) {
-                if (rendererOpt.hasOwnProperty(key)) {
-                    this.renderer[key] = rendererOpt[key];
-                }
-            }
-        },
-        buildOver() {
-            EventHub.renderer = this.renderer;
-            EventHub.camera = this.camera;
-            EventHub.controls = this.controls;
-            // this.controls.switchControls(EventHub.controltype);
         },
         load() {
             if (this.objs.length == 0) return;
@@ -168,19 +123,6 @@ export default {
                     );
                 }
             }
-        },
-        setMaterial(mtl, objects = this.allObjects) {
-            let object;
-            for (let i = 0, il = objects.length; i < il; i++) {
-                object = objects[i];
-                object.traverse(function(child) {
-                    if (child instanceof Mesh) {
-                        if (child.material) child.material.dispose();
-                        child.material = mtl;
-                    }
-                });
-            }
-            this.render();
         }
     }
 };

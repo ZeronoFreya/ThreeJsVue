@@ -192,7 +192,6 @@ export default {
 
         window.addEventListener("resize", this.onResize, false);
 
-        this.buildOver();
     },
     beforeDestroy() {
         cancelAnimationFrame(this.reqId);
@@ -500,8 +499,6 @@ export default {
             }
             return objs;
         },
-
-        buildOver() {},
         animate() {
             this.reqId = requestAnimationFrame(this.animate);
             if (this.isAnimate) {

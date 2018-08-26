@@ -6,7 +6,7 @@ export default {
         return {
             apparentHorizon: 0, // 视平线
             hl: 0, // 计算视平线所需百分比
-            funMap: new Map()
+            // funMap: new Map()
         };
     },
     computed: {
@@ -28,6 +28,9 @@ export default {
         }
     },
     created: function() {
+        if (this.funMap === undefined) {
+            this.funMap = new Map();
+        }
         this.funMap.set("front", this.front);
         this.funMap.set("right", this.right);
         this.funMap.set("top", this.top);
